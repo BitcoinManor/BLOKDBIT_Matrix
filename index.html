@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlokdBit Matrix Web Flasher</title>
+    <script type="module" src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        button {
+            background: #ffa500;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #ff8c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 BlokdBit Matrix Web Flasher</h1>
+        <p>Flash your BlokdBit Matrix with the latest firmware.</p>
+        
+        <label for="wifi-ssid">Wi-Fi SSID:</label>
+        <input type="text" id="wifi-ssid" placeholder="Enter your Wi-Fi name">
+        
+        <label for="wifi-password">Wi-Fi Password:</label>
+        <input type="password" id="wifi-password" placeholder="Enter your Wi-Fi password">
+        
+        <label for="location">Select Your Time Zone:</label>
+        <select id="location">
+            <option value="UTC">UTC (Default)</option>
+            <option value="America/New_York">New York (EST/EDT)</option>
+            <option value="America/Chicago">Chicago (CST/CDT)</option>
+            <option value="America/Denver">Denver (MST/MDT)</option>
+            <option value="America/Edmonton">Edmonton (MST/MDT - Alberta)</option>
+            <option value="America/Los_Angeles">Los Angeles (PST/PDT)</option>
+            <option value="Europe/London">London (GMT/BST)</option>
+            <option value="Europe/Berlin">Berlin (CET/CEST)</option>
+            <option value="Asia/Tokyo">Tokyo (JST)</option>
+            <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
+        </select>
+        
+        <p>Click below to install the firmware on your device.</p>
+        <esp-web-install-button
+            manifest="https://github.com/CryptoDeity/BlokdBit-Matrix/releases/download/v1.0/manifest.json">
+        </esp-web-install-button>
+    </div>
+</body>
+</html>
