@@ -1,0 +1,15 @@
+{
+  "name": "BlokdBit Matrix",
+  "version": "1.0",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        {
+          "path": "https://github.com/BitcoinManor/BlokdBit-Matrix/releases/download/v1.0/BlokdBit_Matrix_FINAL_SKETCH.ino.nodemcu-32s.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
