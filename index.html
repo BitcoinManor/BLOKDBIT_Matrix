@@ -22,15 +22,13 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
         }
-        input, select, button {
+        button {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border-radius: 5px;
             border: none;
             font-size: 16px;
-        }
-        button {
             background: #ffa500;
             color: #000;
             font-weight: bold;
@@ -39,37 +37,48 @@
         button:hover {
             background: #ff8c00;
         }
+        .log-container {
+            text-align: left;
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            height: 150px;
+            overflow-y: scroll;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🚀 BlokdBit Matrix Web Flasher</h1>
-        <p>Flash your BlokdBit Matrix with the latest firmware.</p>
+        <p>Follow the steps below to flash your device:</p>
         
-        <label for="wifi-ssid">Wi-Fi SSID:</label>
-        <input type="text" id="wifi-ssid" placeholder="Enter your Wi-Fi name">
+        <h2>1️⃣ Connect Your Device</h2>
+        <esp-web-install-button manifest="https://bitcoinmanor.github.io/BlokdBit-Matrix/manifest.json"></esp-web-install-button>
         
-        <label for="wifi-password">Wi-Fi Password:</label>
-        <input type="password" id="wifi-password" placeholder="Enter your Wi-Fi password">
+        <h2>2️⃣ Erase or Reconnect</h2>
+        <button onclick="eraseDevice()">Erase Firmware</button>
+        <button onclick="window.location.reload();">Reconnect</button>
         
-        <label for="location">Select Your Time Zone:</label>
-        <select id="location">
-            <option value="UTC">UTC (Default)</option>
-            <option value="America/New_York">New York (EST/EDT)</option>
-            <option value="America/Chicago">Chicago (CST/CDT)</option>
-            <option value="America/Denver">Denver (MST/MDT)</option>
-            <option value="America/Edmonton">Edmonton (MST/MDT - Alberta)</option>
-            <option value="America/Los_Angeles">Los Angeles (PST/PDT)</option>
-            <option value="Europe/London">London (GMT/BST)</option>
-            <option value="Europe/Berlin">Berlin (CET/CEST)</option>
-            <option value="Asia/Tokyo">Tokyo (JST)</option>
-            <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
-        </select>
+        <h2>3️⃣ Upload Firmware</h2>
+        <esp-web-install-button manifest="https://bitcoinmanor.github.io/BlokdBit-Matrix/manifest.json"></esp-web-install-button>
         
-        <p>Click below to install the firmware on your device.</p>
-        <esp-web-install-button
-            manifest="https://raw.githubusercontent.com/BitcoinManor/BlokdBit-Matrix/master/manifest.json">
-        </esp-web-install-button>
+        <h2>4️⃣ Configure Device</h2>
+        <button onclick="showConfigOptions()">Show Configuration Options</button>
+        
+        <h2>Console Output</h2>
+        <div class="log-container" id="log"></div>
     </div>
+
+    <script>
+        function eraseDevice() {
+            document.getElementById("log").innerText += "\nErasing firmware...";
+            // Placeholder for erase functionality
+        }
+        function showConfigOptions() {
+            document.getElementById("log").innerText += "\nOpening configuration options...";
+            // Placeholder for configuration functionality
+        }
+    </script>
 </body>
 </html>
