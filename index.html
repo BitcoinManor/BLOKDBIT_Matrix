@@ -68,16 +68,8 @@
         
         <p>Click below to install the firmware on your device.</p>
         <esp-web-install-button
-            manifest="https://github.com/CryptoDeity/BlokdBit-Matrix/releases/download/v1.0/manifest.json">
+            manifest="https://raw.githubusercontent.com/BitcoinManor/BlokdBit-Matrix/main/manifest.json">
         </esp-web-install-button>
     </div>
-<script>
-    fetch("https://bitcoinmanor.github.io/BlokdBit-Matrix/manifest.json")
-        .then(response => response.json())
-        .then(data => console.log("Manifest Loaded Successfully:", data))
-        .catch(error => console.error("Manifest Fetch Error:", error));
-</script>
-
-
 </body>
 </html>
