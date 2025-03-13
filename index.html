@@ -62,7 +62,11 @@
         <button onclick="window.location.reload();">Reconnect</button>
         
         <h2>3️⃣ Upload Firmware</h2>
-        <esp-web-install-button manifest="https://bitcoinmanor.github.io/BlokdBit-Matrix/manifest.json"></esp-web-install-button>
+        <p>Select firmware version:</p>
+        <select id="firmwareVersion">
+            <option value="https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin">BlokdBit Matrix v1.1</option>
+        </select>
+        <button onclick="uploadFirmware()">Upload Firmware</button>
         
         <h2>4️⃣ Configure Device</h2>
         <button onclick="showConfigOptions()">Show Configuration Options</button>
@@ -92,6 +96,16 @@
             }
             document.getElementById("log").innerText += "\nErasing firmware...";
             // Placeholder for actual erase functionality
+        }
+        
+        async function uploadFirmware() {
+            if (!device) {
+                document.getElementById("log").innerText += "\n❌ No device connected. Connect first!";
+                return;
+            }
+            const firmwareUrl = document.getElementById("firmwareVersion").value;
+            document.getElementById("log").innerText += "\nUploading firmware: " + firmwareUrl;
+            // Placeholder for actual firmware upload
         }
         
         function showConfigOptions() {
