@@ -71,5 +71,13 @@
             manifest="https://github.com/CryptoDeity/BlokdBit-Matrix/releases/download/v1.0/manifest.json">
         </esp-web-install-button>
     </div>
+<script>
+    fetch("https://bitcoinmanor.github.io/BlokdBit-Matrix/manifest.json")
+        .then(response => response.json())
+        .then(data => console.log("Manifest Loaded Successfully:", data))
+        .catch(error => console.error("Manifest Fetch Error:", error));
+</script>
+
+
 </body>
 </html>
