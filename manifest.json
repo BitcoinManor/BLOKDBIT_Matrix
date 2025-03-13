@@ -1,12 +1,12 @@
-{
+  {
   "name": "BlokdBit Matrix",
-  "version": "1.0",
+  "version": "1.1", 
   "builds": [
     {
       "chipFamily": "ESP32",
       "parts": [
         {
-          "path": "https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH.ino.nodemcu-32s.bin",
+          "path": "https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin", 
           "offset": 0
         }
       ]
