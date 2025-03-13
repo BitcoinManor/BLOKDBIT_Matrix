@@ -54,7 +54,8 @@
         <p>Follow the steps below to flash your device:</p>
         
         <h2>1️⃣ Connect Your Device</h2>
-        <esp-web-install-button manifest="https://bitcoinmanor.github.io/BlokdBit-Matrix/manifest.json"></esp-web-install-button>
+        <button onclick="connectDevice()">Connect to Device</button>
+        <p id="deviceStatus">🔴 Not Connected</p>
         
         <h2>2️⃣ Erase or Reconnect</h2>
         <button onclick="eraseDevice()">Erase Firmware</button>
@@ -71,10 +72,28 @@
     </div>
 
     <script>
-        function eraseDevice() {
-            document.getElementById("log").innerText += "\nErasing firmware...";
-            // Placeholder for erase functionality
+        let device;
+
+        async function connectDevice() {
+            try {
+                device = await navigator.serial.requestPort();
+                await device.open({ baudRate: 115200 });
+                document.getElementById("deviceStatus").innerText = "🟢 Connected";
+                document.getElementById("log").innerText += "\nDevice connected successfully.";
+            } catch (error) {
+                document.getElementById("log").innerText += "\nFailed to connect to device.";
+            }
         }
+        
+        async function eraseDevice() {
+            if (!device) {
+                document.getElementById("log").innerText += "\n❌ No device connected. Connect first!";
+                return;
+            }
+            document.getElementById("log").innerText += "\nErasing firmware...";
+            // Placeholder for actual erase functionality
+        }
+        
         function showConfigOptions() {
             document.getElementById("log").innerText += "\nOpening configuration options...";
             // Placeholder for configuration functionality
