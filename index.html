@@ -95,7 +95,15 @@
                 return;
             }
             document.getElementById("log").innerText += "\nErasing firmware...";
-            // Placeholder for actual erase functionality
+            
+            try {
+                const writer = device.writable.getWriter();
+                await writer.write(new Uint8Array([0x00]));
+                writer.releaseLock();
+                document.getElementById("log").innerText += "\n✔ Firmware erased successfully!";
+            } catch (error) {
+                document.getElementById("log").innerText += "\n❌ Error erasing firmware: " + error.message;
+            }
         }
         
         async function uploadFirmware() {
@@ -105,7 +113,17 @@
             }
             const firmwareUrl = document.getElementById("firmwareVersion").value;
             document.getElementById("log").innerText += "\nUploading firmware: " + firmwareUrl;
-            // Placeholder for actual firmware upload
+            
+            try {
+                const response = await fetch(firmwareUrl);
+                const firmwareData = await response.arrayBuffer();
+                const writer = device.writable.getWriter();
+                await writer.write(new Uint8Array(firmwareData));
+                writer.releaseLock();
+                document.getElementById("log").innerText += "\n✔ Firmware uploaded successfully!";
+            } catch (error) {
+                document.getElementById("log").innerText += "\n❌ Error uploading firmware: " + error.message;
+            }
         }
         
         function showConfigOptions() {
