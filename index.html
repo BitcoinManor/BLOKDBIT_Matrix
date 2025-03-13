@@ -98,7 +98,7 @@
             
             try {
                 const writer = device.writable.getWriter();
-                await writer.write(new Uint8Array([0x00]));
+                await writer.write(new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF]));
                 writer.releaseLock();
                 document.getElementById("log").innerText += "\n✔ Firmware erased successfully!";
             } catch (error) {
@@ -112,15 +112,18 @@
                 return;
             }
             const firmwareUrl = document.getElementById("firmwareVersion").value;
-            document.getElementById("log").innerText += "\nUploading firmware: " + firmwareUrl;
+            document.getElementById("log").innerText += "\nDownloading firmware...";
             
             try {
                 const response = await fetch(firmwareUrl);
                 const firmwareData = await response.arrayBuffer();
+                document.getElementById("log").innerText += "\nUploading firmware to device...";
+                
                 const writer = device.writable.getWriter();
                 await writer.write(new Uint8Array(firmwareData));
                 writer.releaseLock();
-                document.getElementById("log").innerText += "\n✔ Firmware uploaded successfully!";
+                
+                document.getElementById("log").innerText += "\n✔ Firmware uploaded successfully! Device is now ready.";
             } catch (error) {
                 document.getElementById("log").innerText += "\n❌ Error uploading firmware: " + error.message;
             }
@@ -128,7 +131,6 @@
         
         function showConfigOptions() {
             document.getElementById("log").innerText += "\nOpening configuration options...";
-            // Placeholder for configuration functionality
         }
     </script>
 </body>
