@@ -22,13 +22,15 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
         }
-        button {
+        button, select, input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border-radius: 5px;
             border: none;
             font-size: 16px;
+        }
+        button {
             background: #ffa500;
             color: #000;
             font-weight: bold;
@@ -46,31 +48,67 @@
             overflow-y: scroll;
             font-size: 14px;
         }
+        .config-form {
+            display: none;
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🚀 BlokdBit Matrix Web Flasher</h1>
         <p>Follow the steps below to flash your device:</p>
-        
+
         <h2>1️⃣ Connect Your Device</h2>
         <button onclick="connectDevice()">Connect to Device</button>
         <p id="deviceStatus">🔴 Not Connected</p>
-        
+
         <h2>2️⃣ Erase or Reconnect</h2>
         <button onclick="eraseDevice()">Erase Firmware</button>
         <button onclick="window.location.reload();">Reconnect</button>
-        
+
         <h2>3️⃣ Upload Firmware</h2>
         <p>Select firmware version:</p>
         <select id="firmwareVersion">
             <option value="https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin">BlokdBit Matrix v1.1</option>
         </select>
         <button onclick="uploadFirmware()">Upload Firmware</button>
-        
+
         <h2>4️⃣ Configure Device</h2>
         <button onclick="showConfigOptions()">Show Configuration Options</button>
-        
+
+        <div class="config-form" id="configForm">
+            <input type="text" id="wifiSSID" placeholder="Wi-Fi SSID">
+            <input type="password" id="wifiPassword" placeholder="Wi-Fi Password">
+            <input type="text" id="city" placeholder="City (for Weather)">
+            <select id="timezone">
+                <option value="America/Los_Angeles">Pacific Time (PST/PDT)</option>
+                <option value="America/Denver">Mountain Time (MST/MDT)</option>
+                <option value="America/Chicago">Central Time (CST/CDT)</option>
+                <option value="America/New_York">Eastern Time (EST/EDT)</option>
+                <option value="UTC">UTC (Universal Time)</option>
+                <option value="Europe/London">London (GMT/BST)</option>
+                <option value="Europe/Paris">Paris (CET/CEST)</option>
+                <option value="Europe/Berlin">Berlin (CET/CEST)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
+                <option value="Asia/Shanghai">Shanghai (CST)</option>
+                <option value="Asia/Kolkata">India Standard Time (IST)</option>
+                <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
+                <option value="Pacific/Auckland">Auckland (NZST/NZDT)</option>
+            </select>
+            <select id="deviceModel">
+                <option value="Matrix">Matrix</option>
+                <option value="Spark">Spark</option>
+                <option value="Pulse">Pulse</option>
+                <option value="Edge">Edge</option>
+                <option value="Infinity">Infinity</option>
+            </select>
+            <button onclick="saveConfig()">Save Config</button>
+        </div>
+
         <h2>Console Output</h2>
         <div class="log-container" id="log"></div>
     </div>
@@ -83,54 +121,63 @@
                 device = await navigator.serial.requestPort();
                 await device.open({ baudRate: 115200 });
                 document.getElementById("deviceStatus").innerText = "🟢 Connected";
-                document.getElementById("log").innerText += "\nDevice connected successfully.";
+                log("Device connected successfully.");
             } catch (error) {
-                document.getElementById("log").innerText += "\nFailed to connect to device.";
+                log("Failed to connect to device.");
             }
         }
-        
+
         async function eraseDevice() {
-            if (!device) {
-                document.getElementById("log").innerText += "\n❌ No device connected. Connect first!";
-                return;
-            }
-            document.getElementById("log").innerText += "\nErasing firmware...";
-            
+            if (!device) return log("\n❌ No device connected. Connect first!");
+            log("\nErasing firmware...");
             try {
                 const writer = device.writable.getWriter();
                 await writer.write(new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF]));
                 writer.releaseLock();
-                document.getElementById("log").innerText += "\n✔ Firmware erased successfully!";
+                log("\n✔ Firmware erased successfully!");
             } catch (error) {
-                document.getElementById("log").innerText += "\n❌ Error erasing firmware: " + error.message;
+                log("\n❌ Error erasing firmware: " + error.message);
             }
         }
-        
+
         async function uploadFirmware() {
-            if (!device) {
-                document.getElementById("log").innerText += "\n❌ No device connected. Connect first!";
-                return;
-            }
+            if (!device) return log("\n❌ No device connected. Connect first!");
             const firmwareUrl = document.getElementById("firmwareVersion").value;
-            document.getElementById("log").innerText += "\nDownloading firmware...";
-            
+            log("\nDownloading firmware...");
             try {
                 const response = await fetch(firmwareUrl);
                 const firmwareData = await response.arrayBuffer();
-                document.getElementById("log").innerText += "\nUploading firmware to device...";
-                
+                log("\nUploading firmware to device...");
                 const writer = device.writable.getWriter();
                 await writer.write(new Uint8Array(firmwareData));
                 writer.releaseLock();
-                
-                document.getElementById("log").innerText += "\n✔ Firmware uploaded successfully! Device is now ready.";
+                log("\n✔ Firmware uploaded successfully! Device is now ready.");
             } catch (error) {
-                document.getElementById("log").innerText += "\n❌ Error uploading firmware: " + error.message;
+                log("\n❌ Error uploading firmware: " + error.message);
             }
         }
-        
+
         function showConfigOptions() {
-            document.getElementById("log").innerText += "\nOpening configuration options...";
+            document.getElementById("configForm").style.display = 'block';
+            log("\nOpened configuration options...");
+        }
+
+        function saveConfig() {
+            const config = {
+                wifiSSID: document.getElementById("wifiSSID").value,
+                wifiPassword: document.getElementById("wifiPassword").value,
+                city: document.getElementById("city").value,
+                timezone: document.getElementById("timezone").value,
+                deviceModel: document.getElementById("deviceModel").value
+            };
+            log("\nConfig saved: " + JSON.stringify(config, null, 2));
+            // TODO: Send this config to device or prepare to store it
+        }
+
+        function log(message) {
+            const logContainer = document.getElementById("log");
+            logContainer.innerText += message + "\n";
+            logContainer.scrollTop = logContainer.scrollHeight;
         }
     </script>
 </body>
