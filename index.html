@@ -3,24 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlokdBit Web Flasher</title>
+    <title>BLOKDBIT Web Flasher</title>
     <script type="module" src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             background-color: #1a1a1a;
             color: #fff;
             margin: 0;
             padding: 20px;
         }
         .container {
-            max-width: 500px;
-            margin: auto;
-            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .section {
+            flex: 1 1 45%;
             background: #222;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+            min-width: 300px;
+        }
+        h1, h2 {
+            text-align: center;
         }
         button, select, input {
             width: 100%;
@@ -40,7 +48,6 @@
             background: #ff8c00;
         }
         .log-container {
-            text-align: left;
             background: #333;
             padding: 10px;
             border-radius: 5px;
@@ -48,39 +55,30 @@
             overflow-y: scroll;
             font-size: 14px;
         }
-        .config-form {
-            display: none;
-            background: #2a2a2a;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
+    <h1>🚀 BLOKDBIT Web Flasher</h1>
+    <p style="text-align:center;">Follow the steps below to flash and configure your device:</p>
     <div class="container">
-        <h1>🚀 BLOKDBIT Web Flasher</h1>
-        <p>Follow the steps below to flash your device:</p>
 
-        <h2>1️⃣ Connect Your Device</h2>
-        <button onclick="connectDevice()">Connect to Device</button>
-        <p id="deviceStatus">🔴 Not Connected</p>
+        <div class="section">
+            <h2>1️⃣ Connect Your Device</h2>
+            <button onclick="connectDevice()">Connect to Device</button>
+            <p id="deviceStatus">🔴 Not Connected</p>
 
-        <h2>2️⃣ Erase or Reconnect</h2>
-        <button onclick="eraseDevice()">Erase Firmware</button>
-        <button onclick="window.location.reload();">Reconnect</button>
+            <h2>2️⃣ Erase or Reconnect</h2>
+            <button onclick="eraseDevice()">Erase Firmware</button>
+            <button onclick="window.location.reload();">Reconnect</button>
 
-        <h2>3️⃣ Upload Firmware</h2>
-        <p>Select firmware version:</p>
-        <select id="firmwareVersion">
-            <option value="https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin">BlokdBit Matrix v1.1</option>
-        </select>
-        <button onclick="uploadFirmware()">Upload Firmware</button>
-
-        <h2>4️⃣ Configure Device</h2>
-        <button onclick="showConfigOptions()">Show Configuration Options</button>
-
-        <div class="config-form" id="configForm">
+            <h2>3️⃣ Configure Device</h2>
+            <select id="deviceModel" onchange="updateFirmwareOptions()">
+                <option value="Matrix">Matrix</option>
+                <option value="Spark">Spark</option>
+                <option value="Pulse">Pulse</option>
+                <option value="Edge">Edge</option>
+                <option value="Infinity">Infinity</option>
+            </select>
             <input type="text" id="wifiSSID" placeholder="Wi-Fi SSID">
             <input type="password" id="wifiPassword" placeholder="Wi-Fi Password">
             <input type="text" id="city" placeholder="City (for Weather)">
@@ -99,18 +97,20 @@
                 <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
                 <option value="Pacific/Auckland">Auckland (NZST/NZDT)</option>
             </select>
-            <select id="deviceModel">
-                <option value="Matrix">Matrix</option>
-                <option value="Spark">Spark</option>
-                <option value="Pulse">Pulse</option>
-                <option value="Edge">Edge</option>
-                <option value="Infinity">Infinity</option>
-            </select>
-            <button onclick="saveConfig()">Save Config</button>
+            <button onclick="saveConfig()">Save Configuration</button>
         </div>
 
-        <h2>Console Output</h2>
-        <div class="log-container" id="log"></div>
+        <div class="section">
+            <h2>4️⃣ Upload Firmware</h2>
+            <p>Select firmware version based on selected device:</p>
+            <select id="firmwareVersion">
+                <option value="https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin">BlokdBit Matrix v1.1</option>
+            </select>
+            <button onclick="uploadFirmware()">Upload Firmware</button>
+
+            <h2>Console Output</h2>
+            <div class="log-container" id="log"></div>
+        </div>
     </div>
 
     <script>
@@ -157,11 +157,6 @@
             }
         }
 
-        function showConfigOptions() {
-            document.getElementById("configForm").style.display = 'block';
-            log("\nOpened configuration options...");
-        }
-
         function saveConfig() {
             const config = {
                 wifiSSID: document.getElementById("wifiSSID").value,
@@ -171,7 +166,31 @@
                 deviceModel: document.getElementById("deviceModel").value
             };
             log("\nConfig saved: " + JSON.stringify(config, null, 2));
-            // TODO: Send this config to device or prepare to store it
+        }
+
+        function updateFirmwareOptions() {
+            const model = document.getElementById("deviceModel").value;
+            const firmwareDropdown = document.getElementById("firmwareVersion");
+            firmwareDropdown.innerHTML = "";
+
+            const firmwareOptions = {
+                Matrix: [
+                    { name: "BlokdBit Matrix v1.1", url: "https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin" }
+                ],
+                Spark: [
+                    { name: "BlokdBit Spark Beta", url: "https://example.com/spark-firmware.bin" }
+                ],
+                Pulse: [],
+                Edge: [],
+                Infinity: []
+            };
+
+            firmwareOptions[model].forEach(opt => {
+                const option = document.createElement("option");
+                option.value = opt.url;
+                option.text = opt.name;
+                firmwareDropdown.appendChild(option);
+            });
         }
 
         function log(message) {
@@ -179,6 +198,8 @@
             logContainer.innerText += message + "\n";
             logContainer.scrollTop = logContainer.scrollHeight;
         }
+
+        window.onload = updateFirmwareOptions;
     </script>
 </body>
 </html>
