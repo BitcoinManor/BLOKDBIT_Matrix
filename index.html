@@ -1,205 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLOKDBIT Web Flasher</title>
-    <script type="module" src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .section {
-            flex: 1 1 45%;
-            background: #222;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
-            min-width: 300px;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        button, select, input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: none;
-            font-size: 16px;
-        }
-        button {
-            background: #ffa500;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #ff8c00;
-        }
-        .log-container {
-            background: #333;
-            padding: 10px;
-            border-radius: 5px;
-            height: 150px;
-            overflow-y: scroll;
-            font-size: 14px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLOKDBIT Web Flasher</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+    .navbar .tabs span {
+      margin: 0 10px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #fca420;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+    .header p {
+      font-size: 16px;
+      color: #ccc;
+    }
+    .grid-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .column {
+      flex: 1 1 45%;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+      min-width: 300px;
+    }
+    .footer {
+      margin-top: 20px;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+      text-align: center;
+    }
+    .footer small {
+      display: block;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #888;
+    }
+    h2 {
+      text-align: center;
+    }
+    button,
+    select,
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #ffa500;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff8c00;
+    }
+    .small-button {
+      width: auto;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    .log-container {
+      background: #333;
+      padding: 10px;
+      border-radius: 5px;
+      height: 200px;
+      overflow-y: scroll;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      background: #222;
+      color: #fff;
+      padding: 20px;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      border-radius: 10px;
+    }
+    .popup.show {
+      display: block;
+    }
+    .popup .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      cursor: pointer;
+      color: #fca420;
+      font-size: 20px;
+    }
+    .popup ol li::marker {
+      color: #fca420;
+    }
+    .popup li {
+      margin-bottom: 10px;
+      line-height: 1.6em;
+    }
+  </style>
 </head>
 <body>
+  <div class="navbar">
+    <div class="tabs">
+      <span onclick="togglePopup('start')">Getting Started</span>
+      <span>Language ▾</span>
+      <span id="themeToggle" onclick="toggleTheme()">🌙</span>
+      <span onclick="togglePopup('socials')">Contact / Socials</span>
+    </div>
+  </div>
+
+  <div class="popup" id="start" style="top: 50px; left: 20px; width: 280px;">
+    <div class="close" onclick="togglePopup('start')">✖</div>
+    <h3>Getting Started</h3>
+    <ol>
+      <li>🔌 Connect your BLOKDBIT device via USB</li>
+      <li>📲 Select your BLOKDBIT model</li>
+      <li>📶 Enter Wi-Fi and location configuration</li>
+      <li>⚡ Flash the correct firmware</li>
+      <li>✅ Done! Your device is ready 🚀</li>
+    </ol>
+    <p style="font-size: 12px; margin-top: 20px;">More detailed setup guide available at:<br><a href="#" target="_blank" style="color:#fca420;">github.com/BitcoinManor/blokdbit-setup</a></p>
+  </div>
+
+  <div class="popup" id="socials" style="top: 50px; left: 50%; transform: translateX(-50%); width: 300px;">
+    <div class="close" onclick="togglePopup('socials')">✖</div>
+    <h3>Connect With Us</h3>
+    <p>
+      <a href="https://x.com/BitcoinManor" target="_blank" style="color:#fca420;">❌ Bitcoin Manor</a><br>
+      <a href="https://x.com/blokdbit" target="_blank" style="color:#fca420;">❌ BLOKDBIT</a><br>
+      <a href="https://www.instagram.com/bitcoinmanor/" target="_blank" style="color:#fca420;">📸 Bitcoin Manor</a><br>
+      <a href="https://www.instagram.com/blokdbit/" target="_blank" style="color:#fca420;">📸 BLOKDBIT</a><br>
+      <a href="https://bitcoinmanor.com" target="_blank" style="color:#fca420;">🌐 bitcoinmanor.com</a><br>
+      <a href="https://blokdbit.com" target="_blank" style="color:#fca420;">🌐 blokdbit.com</a><br>
+      📧 blokdbit@bitcoinmanor.com
+    </p>
+  </div>
+
+  <div class="header">
     <h1>🚀 BLOKDBIT Web Flasher</h1>
-    <p style="text-align:center;">Follow the steps below to flash and configure your device:</p>
-    <div class="container">
+    <p>Follow the steps below to flash and configure your device:</p>
+  </div>
 
-        <div class="section">
-            <h2>1️⃣ Connect Your Device</h2>
-            <button onclick="connectDevice()">Connect to Device</button>
-            <p id="deviceStatus">🔴 Not Connected</p>
-
-            <h2>2️⃣ Erase or Reconnect</h2>
-            <button onclick="eraseDevice()">Erase Firmware</button>
-            <button onclick="window.location.reload();">Reconnect</button>
-
-            <h2>3️⃣ Configure Device</h2>
-            <select id="deviceModel" onchange="updateFirmwareOptions()">
-                <option value="Matrix">Matrix</option>
-                <option value="Spark">Spark</option>
-                <option value="Pulse">Pulse</option>
-                <option value="Edge">Edge</option>
-                <option value="Infinity">Infinity</option>
-            </select>
-            <input type="text" id="wifiSSID" placeholder="Wi-Fi SSID">
-            <input type="password" id="wifiPassword" placeholder="Wi-Fi Password">
-            <input type="text" id="city" placeholder="City (for Weather)">
-            <select id="timezone">
-                <option value="America/Los_Angeles">Pacific Time (PST/PDT)</option>
-                <option value="America/Denver">Mountain Time (MST/MDT)</option>
-                <option value="America/Chicago">Central Time (CST/CDT)</option>
-                <option value="America/New_York">Eastern Time (EST/EDT)</option>
-                <option value="UTC">UTC (Universal Time)</option>
-                <option value="Europe/London">London (GMT/BST)</option>
-                <option value="Europe/Paris">Paris (CET/CEST)</option>
-                <option value="Europe/Berlin">Berlin (CET/CEST)</option>
-                <option value="Asia/Tokyo">Tokyo (JST)</option>
-                <option value="Asia/Shanghai">Shanghai (CST)</option>
-                <option value="Asia/Kolkata">India Standard Time (IST)</option>
-                <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
-                <option value="Pacific/Auckland">Auckland (NZST/NZDT)</option>
-            </select>
-            <button onclick="saveConfig()">Save Configuration</button>
-        </div>
-
-        <div class="section">
-            <h2>4️⃣ Upload Firmware</h2>
-            <p>Select firmware version based on selected device:</p>
-            <select id="firmwareVersion">
-                <option value="https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin">BlokdBit Matrix v1.1</option>
-            </select>
-            <button onclick="uploadFirmware()">Upload Firmware</button>
-
-            <h2>Console Output</h2>
-            <div class="log-container" id="log"></div>
-        </div>
+  <div class="grid-container">
+    <div class="column">
+      <h2>1️⃣ Connect Your Device</h2>
+      <button onclick="connectDevice()">Connect to Device</button>
+      <p id="deviceStatus">🔴 Not Connected</p>
+      <select id="deviceModel" onchange="updateFirmwareOptions()">
+        <option value="Matrix">Matrix</option>
+        <option value="Spark">Spark</option>
+        <option value="Pulse">Pulse</option>
+        <option value="Edge">Edge</option>
+        <option value="Infinity">Infinity</option>
+      </select>
+      <h2>2️⃣ Erase or Reconnect</h2>
+      <button onclick="eraseDevice()">Erase Firmware</button>
+      <button onclick="window.location.reload();">Reconnect</button>
     </div>
 
-    <script>
-        let device;
+    <div class="column">
+      <h2>3️⃣ Configure Device</h2>
+     
+      <input type="text" id="wifiSSID" placeholder="Wi-Fi SSID">
+      <input type="password" id="wifiPassword" placeholder="Wi-Fi Password">
+      <input type="text" id="city" placeholder="City (for Weather)">
+      <select id="timezone">
+        <option value="America/Denver">Mountain Time (MST/MDT)</option>
+        <option value="America/New_York">Eastern Time (EST/EDT)</option>
+        <option value="America/Los_Angeles">Pacific Time (PST/PDT)</option>
+        <option value="UTC">UTC (Universal Time)</option>
+        <option value="Europe/London">London (GMT/BST)</option>
+        <option value="Europe/Berlin">Berlin (CET/CEST)</option>
+        <option value="Asia/Tokyo">Tokyo (JST)</option>
+        <option value="Asia/Kolkata">India Standard Time (IST)</option>
+        <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
+      </select>
+      <button onclick="saveConfig()">Save Configuration</button>
 
-        async function connectDevice() {
-            try {
-                device = await navigator.serial.requestPort();
-                await device.open({ baudRate: 115200 });
-                document.getElementById("deviceStatus").innerText = "🟢 Connected";
-                log("Device connected successfully.");
-            } catch (error) {
-                log("Failed to connect to device.");
-            }
-        }
+      <h2>4️⃣ Upload Firmware</h2>
+      <select id="firmwareVersion"></select>
+      <button onclick="uploadFirmware()">Upload Firmware</button>
+    </div>
+  </div>
 
-        async function eraseDevice() {
-            if (!device) return log("\n❌ No device connected. Connect first!");
-            log("\nErasing firmware...");
-            try {
-                const writer = device.writable.getWriter();
-                await writer.write(new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF]));
-                writer.releaseLock();
-                log("\n✔ Firmware erased successfully!");
-            } catch (error) {
-                log("\n❌ Error erasing firmware: " + error.message);
-            }
-        }
+  <div class="header">
+    <h2>Console Output</h2>
+    <div class="log-container" id="log"></div>
+    <button onclick="downloadLog()" class="small-button">Download Log</button>
+  </div>
 
-        async function uploadFirmware() {
-            if (!device) return log("\n❌ No device connected. Connect first!");
-            const firmwareUrl = document.getElementById("firmwareVersion").value;
-            log("\nDownloading firmware...");
-            try {
-                const response = await fetch(firmwareUrl);
-                const firmwareData = await response.arrayBuffer();
-                log("\nUploading firmware to device...");
-                const writer = device.writable.getWriter();
-                await writer.write(new Uint8Array(firmwareData));
-                writer.releaseLock();
-                log("\n✔ Firmware uploaded successfully! Device is now ready.");
-            } catch (error) {
-                log("\n❌ Error uploading firmware: " + error.message);
-            }
-        }
+  <div class="footer">
+    <small>© 2025 BLOKDBIT Web Flasher. All rights reserved. Maintained by Bitcoin Manor.</small>
+  </div>
 
-        function saveConfig() {
-            const config = {
-                wifiSSID: document.getElementById("wifiSSID").value,
-                wifiPassword: document.getElementById("wifiPassword").value,
-                city: document.getElementById("city").value,
-                timezone: document.getElementById("timezone").value,
-                deviceModel: document.getElementById("deviceModel").value
-            };
-            log("\nConfig saved: " + JSON.stringify(config, null, 2));
-        }
+  <script>
+    function togglePopup(id) {
+      document.getElementById(id).classList.toggle("show");
+    }
 
-        function updateFirmwareOptions() {
-            const model = document.getElementById("deviceModel").value;
-            const firmwareDropdown = document.getElementById("firmwareVersion");
-            firmwareDropdown.innerHTML = "";
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle("light-mode");
+      document.body.style.backgroundColor = isDark ? "#fff" : "#1a1a1a";
+      document.body.style.color = isDark ? "#000" : "#fff";
+      document.getElementById("themeToggle").innerText = isDark ? "☀️" : "🌙";
+    }
 
-            const firmwareOptions = {
-                Matrix: [
-                    { name: "BlokdBit Matrix v1.1", url: "https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin" }
-                ],
-                Spark: [
-                    { name: "BlokdBit Spark Beta", url: "https://example.com/spark-firmware.bin" }
-                ],
-                Pulse: [],
-                Edge: [],
-                Infinity: []
-            };
+    let device;
 
-            firmwareOptions[model].forEach(opt => {
-                const option = document.createElement("option");
-                option.value = opt.url;
-                option.text = opt.name;
-                firmwareDropdown.appendChild(option);
-            });
-        }
+    async function connectDevice() {
+  try {
+    device = await navigator.serial.requestPort();
+    await device.open({ baudRate: 115200 });
+    document.getElementById("deviceStatus").innerText = "🟢 Connected";
+    
+    // ✅ Enable model dropdown
+    const modelDropdown = document.getElementById("deviceModel");
+    if (modelDropdown) {
+      modelDropdown.disabled = false;
+      log("Model selector enabled.");
+    }
 
-        function log(message) {
-            const logContainer = document.getElementById("log");
-            logContainer.innerText += message + "\n";
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
+    log("Device connected successfully.");
+  } catch (error) {
+    log("Failed to connect to device.");
+  }
+}
 
-        window.onload = updateFirmwareOptions;
-    </script>
+    async function eraseDevice() {
+      if (!device) return log("\n❌ No device connected. Connect first!");
+      log("\nErasing firmware...");
+      try {
+        const writer = device.writable.getWriter();
+        await writer.write(new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF]));
+        writer.releaseLock();
+        log("\n✔ Firmware erased successfully!");
+      } catch (error) {
+        log("\n❌ Error erasing firmware: " + error.message);
+      }
+    }
+
+    async function uploadFirmware() {
+      if (!device) return log("\n❌ No device connected. Connect first!");
+      const firmwareUrl = document.getElementById("firmwareVersion").value;
+      log("\nDownloading firmware...");
+      try {
+        const response = await fetch(firmwareUrl);
+        const firmwareData = await response.arrayBuffer();
+        log("\nUploading firmware to device...");
+        const writer = device.writable.getWriter();
+        await writer.write(new Uint8Array(firmwareData));
+        writer.releaseLock();
+        log("\n✔ Firmware uploaded successfully! Device is now ready.");
+      } catch (error) {
+        log("\n❌ Error uploading firmware: " + error.message);
+      }
+    }
+
+    function saveConfig() {
+      const config = {
+        wifiSSID: document.getElementById("wifiSSID").value,
+        wifiPassword: document.getElementById("wifiPassword").value,
+        city: document.getElementById("city").value,
+        timezone: document.getElementById("timezone").value,
+        deviceModel: document.getElementById("deviceModel").value
+      };
+      log("\nConfig saved: " + JSON.stringify(config, null, 2));
+    }
+
+    function updateFirmwareOptions() {
+      const model = document.getElementById("deviceModel").value;
+      const firmwareDropdown = document.getElementById("firmwareVersion");
+      firmwareDropdown.innerHTML = "";
+
+      const firmwareOptions = {
+        Matrix: [
+          { name: "BlokdBit Matrix v1.1", url: "https://bitcoinmanor.github.io/BlokdBit-Matrix/BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino.nodemcu-32s.bin" }
+        ],
+        Spark: [
+          { name: "BlokdBit Spark Beta", url: "https://example.com/spark-firmware.bin" }
+        ],
+        Pulse: [],
+        Edge: [],
+        Infinity: []
+      };
+
+      firmwareOptions[model].forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt.url;
+        option.text = opt.name;
+        firmwareDropdown.appendChild(option);
+      });
+    }
+
+    function log(message) {
+      const logContainer = document.getElementById("log");
+      logContainer.innerText += message + "\n";
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    function downloadLog() {
+      const logContent = document.getElementById("log").innerText;
+      const blob = new Blob([logContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'blokdbit_log.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = updateFirmwareOptions;
+  </script>
 </body>
 </html>
