@@ -6,6 +6,13 @@
   <link rel="icon" href="assets/blokdbit_logo_icon.png" type="image/png">
   <title>BLOKDBIT Web Flasher</title>
   <script type="module" src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
+  <script type="module">
+  import { ESPLoader } from "https://unpkg.com/esp-web-flasher@9.1.0/dist/web/index.js";
+  import { WebSerialTransport } from "https://unpkg.com/esp-web-flasher@9.1.0/dist/web/transport/webserial.js";
+  window.ESPLoader = ESPLoader;
+  window.WebSerialTransport = WebSerialTransport;
+  </script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -301,36 +308,40 @@
     let device;
 
     async function connectDevice() {
-  try {
-    device = await navigator.serial.requestPort();
-    await device.open({ baudRate: 115200 });
-    document.getElementById("deviceStatus").innerText = "🟢 Connected";
+      try {
+      device = await navigator.serial.requestPort();
+      await device.open({ baudRate: 115200 });
+      document.getElementById("deviceStatus").innerText = "🟢 Connected";
     
     // ✅ Enable model dropdown
     const modelDropdown = document.getElementById("deviceModel");
-    if (modelDropdown) {
+      if (modelDropdown) {
       modelDropdown.disabled = false;
       log("Model selector enabled.");
     }
 
-    log("Device connected successfully.");
-  } catch (error) {
-    log("Failed to connect to device.");
+      log("Device connected successfully.");
+    } catch (error) {
+      log("Failed to connect to device.");
+    }
   }
-}
 
     async function eraseDevice() {
       if (!device) return log("\n❌ No device connected. Connect first!");
       log("\nErasing firmware...");
       try {
-        const writer = device.writable.getWriter();
-        await writer.write(new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF]));
-        writer.releaseLock();
+        const transport = new WebSerialTransport(device);
+        const esploader = new ESPLoader(transport, "esp32", false);
+        await transport.connect();
+        await esploader.initialize();
+        await esploader.erase_flash();
+        await transport.disconnect();
         log("\n✔ Firmware erased successfully!");
       } catch (error) {
         log("\n❌ Error erasing firmware: " + error.message);
       }
     }
+
 
     async function uploadFirmware() {
       if (!device) return log("\n❌ No device connected. Connect first!");
