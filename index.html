@@ -9,15 +9,22 @@
   <!-- ESP Web Tools -->
   <script src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
 
-  <!-- ESP Web Flasher: UMD version that works globally -->
+  <!-- ESP Web Flasher: UMD version -->
   <script src="https://unpkg.com/esp-web-flasher@9.1.0/dist/web/index.umd.js"></script>
+
   <script>
-    // Expose the classes globally after UMD loads
-    const { ESPLoader, Transport, WebSerialTransport } = window.espWebFlasher;
-    window.ESPLoader = ESPLoader;
-    window.Transport = Transport;
-    window.WebSerialTransport = WebSerialTransport;
+    // Wait until espWebFlasher is defined
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.espWebFlasher) {
+        window.ESPLoader = window.espWebFlasher.ESPLoader;
+        window.WebSerialTransport = window.espWebFlasher.WebSerialTransport;
+        console.log("✅ ESP Web Flasher loaded and globals assigned");
+      } else {
+        console.error("❌ espWebFlasher UMD not loaded correctly.");
+      }
+    });
   </script>
+
 
 
   <style>
