@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="assets/blokdbit_logo_icon.png" type="image/png">
   <title>BLOKDBIT Web Flasher</title>
   <script type="module" src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
   <style>
@@ -70,6 +71,25 @@
     h2 {
       text-align: center;
     }
+
+    .outline-btn {
+      background: transparent;
+      border: 2px solid #fca420;
+      color: #fca420;
+      font-weight: bold;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .outline-btn:hover {
+      background-color: rgba(252, 164, 32, 0.1);
+    }
+
     button,
     select,
     input {
@@ -136,6 +156,7 @@
 <body>
   <div class="navbar">
     <div class="tabs">
+      <img src="assets/blokdbit_logo_icon.png" alt="Logo" style="height: 24px; margin-right: 8px; vertical-align: middle;">
       <span onclick="togglePopup('start')">Getting Started</span>
       <span>Language ▾</span>
       <span id="themeToggle" onclick="toggleTheme()">🌙</span>
@@ -171,22 +192,28 @@
   </div>
 
   <div class="header">
-    <h1>🚀 BLOKDBIT Web Flasher</h1>
-    <p>Follow the steps below to flash and configure your device:</p>
+    <h1>
+      <img src="assets/blokdbit_logo_icon.png" alt="BLOKDBIT" style="height: 28px; vertical-align: middle; margin-right: 10px;">
+      BLOKDBIT Web Flasher <br> Where your Bitcoin Dashoard Begins!
+    </h1>
+    <p>Plug in your BLOKDBIT. Pick your model. Flash it. Done. <br> It’s never been this easy to launch your Bitcoin Dashboard. ⚡</p>
   </div>
 
   <div class="grid-container">
     <div class="column">
       <h2>1️⃣ Connect Your Device</h2>
-      <button onclick="connectDevice()">Connect to Device</button>
-      <p id="deviceStatus">🔴 Not Connected</p>
-      <select id="deviceModel" onchange="updateFirmwareOptions()">
+     <button class="outline-btn" onclick="connectDevice()">
+        🔌 Connect to Device
+    </button>
+        <select id="deviceModel" onchange="updateFirmwareOptions()"disabled>
         <option value="Matrix">Matrix</option>
         <option value="Spark">Spark</option>
         <option value="Pulse">Pulse</option>
         <option value="Edge">Edge</option>
         <option value="Infinity">Infinity</option>
       </select>
+      <p id="deviceStatus">🔴 Not Connected</p>
+      
       <h2>2️⃣ Erase or Reconnect</h2>
       <button onclick="eraseDevice()">Erase Firmware</button>
       <button onclick="window.location.reload();">Reconnect</button>
