@@ -81,25 +81,45 @@
       font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      width: auto;
+      min-width: 220px;
     }
     .outline-btn:hover {
       background-color: rgba(252, 164, 32, 0.1);
     }
 
-    button,
-    select,
-    input {
-      width: 100%;
+    input[type="text"],
+    input[type="password"], 
+    select {
+      background-color: #1e1e1e;
+      border: 2px solid #333;
+      color: #fff;
       padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
       font-size: 16px;
+      border-radius: 5px;
+      width: 95%;
+      max-width: 450px;
+      margin: 10px auto;
+      display: block;
+      transition: all 0.2s ease-in-out;
     }
+
+
+    input::placeholder {
+      color: #fca420;
+      opacity: 0.7;
+    }
+
+    input:focus, select:focus {
+      border-color: #fca420;
+      outline: none;
+      background-color: #262626;
+    }
+
     button {
       background: #ffa500;
       color: #000;
@@ -193,10 +213,10 @@
 
   <div class="header">
     <h1>
-      <img src="assets/blokdbit_logo_icon.png" alt="BLOKDBIT" style="height: 28px; vertical-align: middle; margin-right: 10px;">
+      <img src="assets/blokdbit_logo_icon.png" alt="BLOKDBIT" style="height: 50px; vertical-align: middle; margin-right: 21px;">
       BLOKDBIT Web Flasher <br> Where your Bitcoin Dashoard Begins!
     </h1>
-    <p>Plug in your BLOKDBIT. Pick your model. Flash it. Done. <br> It’s never been this easy to launch your Bitcoin Dashboard. ⚡</p>
+    <p>⚡Plug in your BLOKDBIT. Pick your model. Flash it. Done. <br> It’s never been this easy to launch your Bitcoin Dashboard. ⚡</p>
   </div>
 
   <div class="grid-container">
@@ -215,9 +235,15 @@
       <p id="deviceStatus">🔴 Not Connected</p>
       
       <h2>2️⃣ Erase or Reconnect</h2>
-      <button onclick="eraseDevice()">Erase Firmware</button>
-      <button onclick="window.location.reload();">Reconnect</button>
-    </div>
+    <button class="outline-btn" onclick="eraseDevice()">
+        🗑️ Erase Firmware
+    </button>
+
+    <button class="outline-btn" onclick="window.location.reload();">
+      🔁 Reconnect
+  </button>
+
+  </div>
 
     <div class="column">
       <h2>3️⃣ Configure Device</h2>
@@ -236,11 +262,17 @@
         <option value="Asia/Kolkata">India Standard Time (IST)</option>
         <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
       </select>
-      <button onclick="saveConfig()">Save Configuration</button>
+    <button class="outline-btn" onclick="saveConfig()">
+      💾 Save Configuration
+  </button>
 
-      <h2>4️⃣ Upload Firmware</h2>
+
+      <h2>4️⃣ ⚡Flash Firmware⚡</h2>
       <select id="firmwareVersion"></select>
-      <button onclick="uploadFirmware()">Upload Firmware</button>
+      <button class="outline-btn" onclick="uploadFirmware()">
+        ⚡ Flash Firmware
+    </button>
+
     </div>
   </div>
 
