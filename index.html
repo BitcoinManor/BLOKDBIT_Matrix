@@ -13,7 +13,6 @@
   <script src="https://unpkg.com/esp-web-flasher@9.1.0/dist/web/index.umd.js"></script>
 
   <script>
-    // Wait until espWebFlasher is defined
     window.addEventListener("DOMContentLoaded", () => {
       if (window.espWebFlasher) {
         window.ESPLoader = window.espWebFlasher.ESPLoader;
@@ -22,99 +21,22 @@
       } else {
         console.error("❌ espWebFlasher UMD not loaded correctly.");
       }
+
+      const modelDropdown = document.getElementById("deviceModel");
+      if (modelDropdown) {
+        updateFirmwareOptions();
+      } else {
+        console.error("❌ deviceModel element not found in DOM.");
+      }
     });
-  </script>
-
-  <style>
-    /* ...existing styles... */
-  </style>
-</head>
-<body>
-  <!-- ...existing HTML content... -->
-
-  <script>
-    function togglePopup(id) {
-      document.getElementById(id).classList.toggle("show");
-    }
-
-    function toggleTheme() {
-      const isDark = document.body.classList.toggle("light-mode");
-      document.body.style.backgroundColor = isDark ? "#fff" : "#1a1a1a";
-      document.body.style.color = isDark ? "#000" : "#fff";
-      document.getElementById("themeToggle").innerText = isDark ? "☀️" : "🌙";
-    }
-
-    let device;
-
-    async function connectDevice() {
-      try {
-        device = await navigator.serial.requestPort();
-        await device.open({ baudRate: 115200 });
-        document.getElementById("deviceStatus").innerText = "🟢 Connected";
-
-        // ✅ Enable model dropdown
-        const modelDropdown = document.getElementById("deviceModel");
-        if (modelDropdown) {
-          modelDropdown.disabled = false;
-          log("Model selector enabled.");
-        }
-
-        log("Device connected successfully.");
-      } catch (error) {
-        log("Failed to connect to device.");
-      }
-    }
-
-    async function eraseDevice() {
-      if (!device) return log("\n❌ No device connected. Connect first!");
-      if (!window.WebSerialTransport) {
-        log("\n❌ WebSerialTransport is not defined. Ensure esp-web-flasher is loaded correctly.");
-        return;
-      }
-      log("\nErasing firmware...");
-      try {
-        const transport = new WebSerialTransport(device);
-        const esploader = new ESPLoader(transport, "esp32", false);
-        await transport.connect();
-        await esploader.initialize();
-        await esploader.erase_flash();
-        await transport.disconnect();
-        log("\n✔ Firmware erased successfully!");
-      } catch (error) {
-        log("\n❌ Error erasing firmware: " + error.message);
-      }
-    }
-
-    async function uploadFirmware() {
-      if (!device) return log("\n❌ No device connected. Connect first!");
-      const firmwareUrl = document.getElementById("firmwareVersion").value;
-      log("\nDownloading firmware...");
-      try {
-        const response = await fetch(firmwareUrl);
-        const firmwareData = await response.arrayBuffer();
-        log("\nUploading firmware to device...");
-        const writer = device.writable.getWriter();
-        await writer.write(new Uint8Array(firmwareData));
-        writer.releaseLock();
-        log("\n✔ Firmware uploaded successfully! Device is now ready.");
-      } catch (error) {
-        log("\n❌ Error uploading firmware: " + error.message);
-      }
-    }
-
-    function saveConfig() {
-      const config = {
-        wifiSSID: document.getElementById("wifiSSID").value,
-        wifiPassword: document.getElementById("wifiPassword").value,
-        city: document.getElementById("city").value,
-        timezone: document.getElementById("timezone").value,
-        deviceModel: document.getElementById("deviceModel").value
-      };
-      log("\nConfig saved: " + JSON.stringify(config, null, 2));
-    }
 
     function updateFirmwareOptions() {
-      const model = document.getElementById("deviceModel").value;
+      const modelDropdown = document.getElementById("deviceModel");
+      if (!modelDropdown) {
+        console.error("❌ deviceModel element not found when updating firmware options.");
+        return;
+      }
+
       const firmwareDropdown = document.getElementById("firmwareVersion");
       firmwareDropdown.innerHTML = "";
 
@@ -130,32 +52,33 @@
         Infinity: []
       };
 
-      firmwareOptions[model].forEach(opt => {
-        const option = document.createElement("option");
-        option.value = opt.url;
-        option.text = opt.name;
-        firmwareDropdown.appendChild(option);
-      });
+      const selectedModel = modelDropdown.value;
+      if (firmwareOptions[selectedModel]) {
+        firmwareOptions[selectedModel].forEach(opt => {
+          const option = document.createElement("option");
+          option.value = opt.url;
+          option.text = opt.name;
+          firmwareDropdown.appendChild(option);
+        });
+      } else {
+        console.error(`❌ No firmware options found for model: ${selectedModel}`);
+      }
     }
-
-    function log(message) {
-      const logContainer = document.getElementById("log");
-      logContainer.innerText += message + "\n";
-      logContainer.scrollTop = logContainer.scrollHeight;
-    }
-
-    function downloadLog() {
-      const logContent = document.getElementById("log").innerText;
-      const blob = new Blob([logContent], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'blokdbit_log.txt';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    window.onload = updateFirmwareOptions;
   </script>
+</head>
+<body>
+  <!-- Add the missing deviceModel element -->
+  <select id="deviceModel">
+    <option value="Matrix">Matrix</option>
+    <option value="Spark">Spark</option>
+    <option value="Pulse">Pulse</option>
+    <option value="Edge">Edge</option>
+    <option value="Infinity">Infinity</option>
+  </select>
+
+  <!-- Add a placeholder for firmwareVersion -->
+  <select id="firmwareVersion"></select>
+
+  <div id="log"></div>
 </body>
 </html>
