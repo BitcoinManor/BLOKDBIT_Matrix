@@ -11,6 +11,13 @@
 
   <!-- ESP Web Flasher: UMD version that works globally -->
   <script src="https://unpkg.com/esp-web-flasher@9.1.0/dist/web/index.umd.js"></script>
+  <script>
+    // Expose the classes globally after UMD loads
+    const { ESPLoader, Transport, WebSerialTransport } = window.espWebFlasher;
+    window.ESPLoader = ESPLoader;
+    window.Transport = Transport;
+    window.WebSerialTransport = WebSerialTransport;
+  </script>
 
 
   <style>
