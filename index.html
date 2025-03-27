@@ -6,31 +6,11 @@
   <link rel="icon" href="assets/blokdbit_logo_icon.png" type="image/png">
   <title>BLOKDBIT Web Flasher</title>
 
-  <!-- ESP Web Tools -->
-  <script src="https://unpkg.com/esp-web-tools@9.1.0/dist/web/install-button.js"></script>
-
-  <!-- ESP Web Flasher: UMD version -->
-  <script src="https://unpkg.com/esp-web-flasher@9.1.0/dist/web/index.umd.js"></script>
+  <!-- Include esptool-js -->
+  <script src="https://cdn.jsdelivr.net/npm/esptool-js/dist/index.min.js"></script>
 
   <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      if (window.espWebFlasher) {
-        window.ESPLoader = window.espWebFlasher.ESPLoader;
-        window.WebSerialTransport = window.espWebFlasher.WebSerialTransport;
-        console.log("✅ ESP Web Flasher loaded and globals assigned");
-      } else {
-        console.error("❌ espWebFlasher UMD not loaded correctly.");
-      }
-
-      const modelDropdown = document.getElementById("deviceModel");
-      if (modelDropdown) {
-        updateFirmwareOptions();
-      } else {
-        console.error("❌ deviceModel element not found in DOM.");
-      }
-    });
-
-    function updateFirmwareOptions() {
+    async function updateFirmwareOptions() {
       const modelDropdown = document.getElementById("deviceModel");
       if (!modelDropdown) {
         console.error("❌ deviceModel element not found when updating firmware options.");
@@ -64,21 +44,80 @@
         console.error(`❌ No firmware options found for model: ${selectedModel}`);
       }
     }
+
+    async function connectDevice() {
+      try {
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+        document.getElementById("deviceStatus").innerText = "🟢 Connected";
+        log("Device connected successfully.");
+        return port;
+      } catch (error) {
+        log("Failed to connect to device: " + error.message);
+        throw error;
+      }
+    }
+
+    async function eraseDevice() {
+      try {
+        const port = await connectDevice();
+        const esptool = new ESPLoader(port);
+        await esptool.initialize();
+        log("Connected to device.");
+        await esptool.eraseFlash();
+        log("✔ Firmware erased successfully!");
+        await port.close();
+      } catch (error) {
+        log("❌ Error erasing firmware: " + error.message);
+      }
+    }
+
+    async function uploadFirmware() {
+      try {
+        const port = await connectDevice();
+        const firmwareUrl = document.getElementById("firmwareVersion").value;
+        log("Downloading firmware...");
+        const response = await fetch(firmwareUrl);
+        const firmwareData = await response.arrayBuffer();
+        const esptool = new ESPLoader(port);
+        await esptool.initialize();
+        log("Uploading firmware...");
+        await esptool.flashData(new Uint8Array(firmwareData));
+        log("✔ Firmware uploaded successfully!");
+        await port.close();
+      } catch (error) {
+        log("❌ Error uploading firmware: " + error.message);
+      }
+    }
+
+    function log(message) {
+      const logContainer = document.getElementById("log");
+      logContainer.innerText += message + "\n";
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
   </script>
 </head>
 <body>
-  <!-- Add the missing deviceModel element -->
-  <select id="deviceModel">
-    <option value="Matrix">Matrix</option>
-    <option value="Spark">Spark</option>
-    <option value="Pulse">Pulse</option>
-    <option value="Edge">Edge</option>
-    <option value="Infinity">Infinity</option>
-  </select>
-
-  <!-- Add a placeholder for firmwareVersion -->
-  <select id="firmwareVersion"></select>
-
-  <div id="log"></div>
+  <h1>BLOKDBIT Web Flasher</h1>
+  <div>
+    <label for="deviceModel">Device Model:</label>
+    <select id="deviceModel" onchange="updateFirmwareOptions()">
+      <option value="Matrix">Matrix</option>
+      <option value="Spark">Spark</option>
+      <option value="Pulse">Pulse</option>
+      <option value="Edge">Edge</option>
+      <option value="Infinity">Infinity</option>
+    </select>
+  </div>
+  <div>
+    <label for="firmwareVersion">Firmware Version:</label>
+    <select id="firmwareVersion"></select>
+  </div>
+  <div>
+    <button onclick="eraseDevice()">Erase Firmware</button>
+    <button onclick="uploadFirmware()">Upload Firmware</button>
+  </div>
+  <div id="deviceStatus">🔴 Not Connected</div>
+  <pre id="log"></pre>
 </body>
 </html>
