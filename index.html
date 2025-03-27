@@ -25,287 +25,12 @@
     });
   </script>
 
-
-
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #1a1a1a;
-      color: #fff;
-      margin: 0;
-      padding: 20px;
-    }
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 10px;
-    }
-    .navbar .tabs span {
-      margin: 0 10px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #fca420;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .header h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-    .header p {
-      font-size: 16px;
-      color: #ccc;
-    }
-    .grid-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-    .column {
-      flex: 1 1 45%;
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
-      min-width: 300px;
-    }
-    .footer {
-      margin-top: 20px;
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
-      text-align: center;
-    }
-    .footer small {
-      display: block;
-      margin-top: 15px;
-      font-size: 12px;
-      color: #888;
-    }
-    h2 {
-      text-align: center;
-    }
-
-    .outline-btn {
-      background: transparent;
-      border: 2px solid #fca420;
-      color: #fca420;
-      font-weight: bold;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: auto;
-      min-width: 220px;
-    }
-    .outline-btn:hover {
-      background-color: rgba(252, 164, 32, 0.1);
-    }
-
-    input[type="text"],
-    input[type="password"], 
-    select {
-      background-color: #1e1e1e;
-      border: 2px solid #333;
-      color: #fff;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      width: 95%;
-      max-width: 450px;
-      margin: 10px auto;
-      display: block;
-      transition: all 0.2s ease-in-out;
-    }
-
-
-    input::placeholder {
-      color: #fca420;
-      opacity: 0.7;
-    }
-
-    input:focus, select:focus {
-      border-color: #fca420;
-      outline: none;
-      background-color: #262626;
-    }
-
-    button {
-      background: #ffa500;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ff8c00;
-    }
-    .small-button {
-      width: auto;
-      padding: 8px 16px;
-      font-size: 14px;
-    }
-    .log-container {
-      background: #333;
-      padding: 10px;
-      border-radius: 5px;
-      height: 200px;
-      overflow-y: scroll;
-      font-size: 14px;
-      white-space: pre-wrap;
-    }
-    .popup {
-      display: none;
-      position: fixed;
-      background: #222;
-      color: #fff;
-      padding: 20px;
-      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      border-radius: 10px;
-    }
-    .popup.show {
-      display: block;
-    }
-    .popup .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      cursor: pointer;
-      color: #fca420;
-      font-size: 20px;
-    }
-    .popup ol li::marker {
-      color: #fca420;
-    }
-    .popup li {
-      margin-bottom: 10px;
-      line-height: 1.6em;
-    }
+    /* ...existing styles... */
   </style>
 </head>
 <body>
-  <div class="navbar">
-    <div class="tabs">
-      <img src="assets/blokdbit_logo_icon.png" alt="Logo" style="height: 24px; margin-right: 8px; vertical-align: middle;">
-      <span onclick="togglePopup('start')">Getting Started</span>
-      <span>Language ▾</span>
-      <span id="themeToggle" onclick="toggleTheme()">🌙</span>
-      <span onclick="togglePopup('socials')">Contact / Socials</span>
-    </div>
-  </div>
-
-  <div class="popup" id="start" style="top: 50px; left: 20px; width: 280px;">
-    <div class="close" onclick="togglePopup('start')">✖</div>
-    <h3>Getting Started</h3>
-    <ol>
-      <li>🔌 Connect your BLOKDBIT device via USB</li>
-      <li>📲 Select your BLOKDBIT model</li>
-      <li>📶 Enter Wi-Fi and location configuration</li>
-      <li>⚡ Flash the correct firmware</li>
-      <li>✅ Done! Your device is ready 🚀</li>
-    </ol>
-    <p style="font-size: 12px; margin-top: 20px;">More detailed setup guide available at:<br><a href="#" target="_blank" style="color:#fca420;">github.com/BitcoinManor/blokdbit-setup</a></p>
-  </div>
-
-  <div class="popup" id="socials" style="top: 50px; left: 50%; transform: translateX(-50%); width: 300px;">
-    <div class="close" onclick="togglePopup('socials')">✖</div>
-    <h3>Connect With Us</h3>
-    <p>
-      <a href="https://x.com/BitcoinManor" target="_blank" style="color:#fca420;">❌ Bitcoin Manor</a><br>
-      <a href="https://x.com/blokdbit" target="_blank" style="color:#fca420;">❌ BLOKDBIT</a><br>
-      <a href="https://www.instagram.com/bitcoinmanor/" target="_blank" style="color:#fca420;">📸 Bitcoin Manor</a><br>
-      <a href="https://www.instagram.com/blokdbit/" target="_blank" style="color:#fca420;">📸 BLOKDBIT</a><br>
-      <a href="https://bitcoinmanor.com" target="_blank" style="color:#fca420;">🌐 bitcoinmanor.com</a><br>
-      <a href="https://blokdbit.com" target="_blank" style="color:#fca420;">🌐 blokdbit.com</a><br>
-      📧 blokdbit@bitcoinmanor.com
-    </p>
-  </div>
-
-  <div class="header">
-    <h1>
-      <img src="assets/blokdbit_logo_icon.png" alt="BLOKDBIT" style="height: 75px; vertical-align: middle; margin-right: 21px;">
-      BLOKDBIT Web Flasher <br> Where your Bitcoin Dashoard Begins!
-    </h1>
-    <p>⚡Plug in your BLOKDBIT. Pick your model. Flash it. Done. <br> It’s never been this easy to launch your Bitcoin Dashboard. ⚡</p>
-  </div>
-
-  <div class="grid-container">
-    <div class="column">
-      <h2>1️⃣ Connect Your Device</h2>
-     <button class="outline-btn" onclick="connectDevice()">
-        🔌 Connect to Device
-    </button>
-        <select id="deviceModel" onchange="updateFirmwareOptions()"disabled>
-        <option value="Matrix">Matrix</option>
-        <option value="Spark">Spark</option>
-        <option value="Pulse">Pulse</option>
-        <option value="Edge">Edge</option>
-        <option value="Infinity">Infinity</option>
-      </select>
-      <p id="deviceStatus">🔴 Not Connected</p>
-      
-      <h2>2️⃣ Erase or Reconnect</h2>
-    <button class="outline-btn" onclick="eraseDevice()">
-        🗑️ Erase Firmware
-    </button>
-
-    <button class="outline-btn" onclick="window.location.reload();">
-      🔁 Reconnect
-  </button>
-
-  </div>
-
-    <div class="column">
-      <h2>3️⃣ Configure Device</h2>
-     
-      <input type="text" id="wifiSSID" placeholder="Wi-Fi SSID">
-      <input type="password" id="wifiPassword" placeholder="Wi-Fi Password">
-      <input type="text" id="city" placeholder="City (for Weather)">
-      <select id="timezone">
-        <option value="America/Denver">Mountain Time (MST/MDT)</option>
-        <option value="America/New_York">Eastern Time (EST/EDT)</option>
-        <option value="America/Los_Angeles">Pacific Time (PST/PDT)</option>
-        <option value="UTC">UTC (Universal Time)</option>
-        <option value="Europe/London">London (GMT/BST)</option>
-        <option value="Europe/Berlin">Berlin (CET/CEST)</option>
-        <option value="Asia/Tokyo">Tokyo (JST)</option>
-        <option value="Asia/Kolkata">India Standard Time (IST)</option>
-        <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
-      </select>
-    <button class="outline-btn" onclick="saveConfig()">
-      💾 Save Configuration
-  </button>
-
-
-      <h2>4️⃣ ⚡Flash Firmware⚡</h2>
-      <select id="firmwareVersion"></select>
-      <button class="outline-btn" onclick="uploadFirmware()">
-        ⚡ Flash Firmware
-    </button>
-
-    </div>
-  </div>
-
-  <div class="header">
-    <h2>Console Output</h2>
-    <div class="log-container" id="log"></div>
-    <button onclick="downloadLog()" class="small-button">Download Log</button>
-  </div>
-
-  <div class="footer">
-    <small>© 2025 BLOKDBIT Web Flasher. All rights reserved. Maintained by Bitcoin Manor.</small>
-  </div>
+  <!-- ...existing HTML content... -->
 
   <script>
     function togglePopup(id) {
@@ -323,25 +48,29 @@
 
     async function connectDevice() {
       try {
-      device = await navigator.serial.requestPort();
-      await device.open({ baudRate: 115200 });
-      document.getElementById("deviceStatus").innerText = "🟢 Connected";
-    
-    // ✅ Enable model dropdown
-    const modelDropdown = document.getElementById("deviceModel");
-      if (modelDropdown) {
-      modelDropdown.disabled = false;
-      log("Model selector enabled.");
-    }
+        device = await navigator.serial.requestPort();
+        await device.open({ baudRate: 115200 });
+        document.getElementById("deviceStatus").innerText = "🟢 Connected";
 
-      log("Device connected successfully.");
-    } catch (error) {
-      log("Failed to connect to device.");
+        // ✅ Enable model dropdown
+        const modelDropdown = document.getElementById("deviceModel");
+        if (modelDropdown) {
+          modelDropdown.disabled = false;
+          log("Model selector enabled.");
+        }
+
+        log("Device connected successfully.");
+      } catch (error) {
+        log("Failed to connect to device.");
+      }
     }
-  }
 
     async function eraseDevice() {
       if (!device) return log("\n❌ No device connected. Connect first!");
+      if (!window.WebSerialTransport) {
+        log("\n❌ WebSerialTransport is not defined. Ensure esp-web-flasher is loaded correctly.");
+        return;
+      }
       log("\nErasing firmware...");
       try {
         const transport = new WebSerialTransport(device);
@@ -355,7 +84,6 @@
         log("\n❌ Error erasing firmware: " + error.message);
       }
     }
-
 
     async function uploadFirmware() {
       if (!device) return log("\n❌ No device connected. Connect first!");
