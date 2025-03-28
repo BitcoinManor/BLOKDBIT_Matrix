@@ -317,62 +317,92 @@
         console.error(error); // Log the error for debugging
       }
    }
-    async function eraseFirmware() {
-      console.log("esptool-js loaded:", window.esptool); // Debug log for esptool-js
-      if (!window.esptool) {
-        log("❌ esptool-js not loaded. Please check the script source.");
-        return;
-      }
-     
-      if (!device) return log("❌ No device connected. Connect first!");
-      log("Erasing firmware...");
+   async function eraseFirmware() {
+  console.log("Device object:", device); // Debug log for the device
+  console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
 
-      try {
-        const transport = new window.esptool.Transport(device);
-        const esploader = new window.esptool.ESPLoader(transport, "esp32");
+  if (typeof ESPLoader === "undefined") {
+    log("❌ esptool-js not loaded. Please check the script source.");
+    return;
+  }
 
-        await transport.connect();
-        await esploader.initialize();
-        await esploader.eraseFlash();
-        await transport.disconnect();
+  if (!device) {
+    log("❌ No device connected. Connect first!");
+    return;
+  }
 
-        log("✔ Firmware erased successfully!");
-      } catch (error) {
-        log("❌ Error erasing firmware: " + error.message);
-        console.error(error); // Log the error for debugging
-      }
-    }
+  log("Erasing firmware...");
 
-    async function uploadFirmware() {
-      console.log("esptool-js loaded:", window.esptool); // Debug log
-      if (!window.esptool) {
-        log("❌ esptool-js not loaded. Please check the script source.");
-        return;
-      }
+  try {
+    const transport = new ESPLoader.WebSerialTransport(device);
+    const esploader = new ESPLoader(transport, "esp32");
+    console.log("Transport and ESPLoader initialized:", transport, esploader);
 
-      if (!device) return log("❌ No device connected. Connect first!");
-      const firmwareUrl = document.getElementById("firmwareVersion").value;
-      log("Downloading firmware...");
+    await transport.connect();
+    console.log("Transport connected.");
 
-      try {
-        console.log("Firmware URL:", firmwareUrl); // Debug log for the firmware URL
-        const response = await fetch(firmwareUrl);
-        const firmwareData = await response.arrayBuffer();
-        log("Uploading firmware to device...");
-        const transport = new window.esptool.Transport(device);
-        const esploader = new window.esptool.ESPLoader(transport, "esp32");
+    await esploader.initialize();
+    console.log("ESPLoader initialized.");
 
-        await transport.connect();
-        await esploader.initialize();
-        await esploader.flashData(new Uint8Array(firmwareData));
-        await transport.disconnect();
+    await esploader.eraseFlash();
+    console.log("Flash erased.");
 
-        log("✔ Firmware uploaded successfully!");
-      } catch (error) {
-        log("❌ Error uploading firmware: " + error.message);
-        console.error(error); // Log the error for debugging
-      }
-    }
+    await transport.disconnect();
+    console.log("Transport disconnected.");
+
+    log("✔ Firmware erased successfully!");
+  } catch (error) {
+    log("❌ Error erasing firmware: " + error.message);
+    console.error("Error erasing firmware:", error);
+  }
+}
+
+async function uploadFirmware() {
+  console.log("Device object:", device); // Debug log for the device
+  console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
+
+  if (typeof ESPLoader === "undefined") {
+    log("❌ esptool-js not loaded. Please check the script source.");
+    return;
+  }
+
+  if (!device) {
+    log("❌ No device connected. Connect first!");
+    return;
+  }
+
+  const firmwareUrl = document.getElementById("firmwareVersion").value;
+  log("Downloading firmware...");
+
+  try {
+    console.log("Firmware URL:", firmwareUrl); // Debug log for the firmware URL
+    const response = await fetch(firmwareUrl);
+    const firmwareData = await response.arrayBuffer();
+    console.log("Firmware downloaded:", firmwareData);
+
+    log("Uploading firmware to device...");
+    const transport = new ESPLoader.WebSerialTransport(device);
+    const esploader = new ESPLoader(transport, "esp32");
+    console.log("Transport and ESPLoader initialized:", transport, esploader);
+
+    await transport.connect();
+    console.log("Transport connected.");
+
+    await esploader.initialize();
+    console.log("ESPLoader initialized.");
+
+    await esploader.flashData(new Uint8Array(firmwareData));
+    console.log("Firmware flashed.");
+
+    await transport.disconnect();
+    console.log("Transport disconnected.");
+
+    log("✔ Firmware uploaded successfully!");
+  } catch (error) {
+    log("❌ Error uploading firmware: " + error.message);
+    console.error("Error uploading firmware:", error);
+  }
+}
 
     function saveConfig() {
       const config = {
