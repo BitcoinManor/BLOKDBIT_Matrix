@@ -303,17 +303,35 @@
         await device.open({ baudRate: 115200 });
         document.getElementById("deviceStatus").innerText = "🟢 Connected";
         // ✅ Enable model dropdown
-    const modelDropdown = document.getElementById("deviceModel");
-      if (modelDropdown) {
-      modelDropdown.disabled = false;
-      log("Model selector enabled.");
-    }
+        const modelDropdown = document.getElementById("deviceModel");
+        if (modelDropdown) {
+          modelDropdown.disabled = false;
+          log("Model selector enabled.");
+      }
 
       log("Device connected successfully.");
     } catch (error) {
       log("Failed to connect to device.");
     }
   }
+    async function eraseFirmware() {
+      if (!device) return log("❌ No device connected. Connect first!");
+      log("Erasing firmware...");
+
+      try {
+        const transport = new window.esptool.Transport(device);
+        const esploader = new window.esptool.ESPLoader(transport, "esp32");
+
+        await transport.connect();
+        await esploader.initialize();
+        await esploader.eraseFlash();
+        await transport.disconnect();
+
+        log("✔ Firmware erased successfully!");
+      } catch (error) {
+        log("❌ Error erasing firmware: " + error.message);
+      }
+    }
 
     async function uploadFirmware() {
       if (!device) return log("❌ No device connected. Connect first!");
