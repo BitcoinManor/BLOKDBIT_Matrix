@@ -231,7 +231,7 @@
 
       
       <h2>2️⃣ Erase or Reconnect</h2>
-    <button class="outline-btn" onclick="eraseDevice()">
+    <button class="outline-btn" onclick="eraseFirmware()">
         🗑️ Erase Firmware
     </button>
 
@@ -309,11 +309,13 @@
           log("Model selector enabled.");
       }
 
-      log("Device connected successfully.");
-    } catch (error) {
-      log("Failed to connect to device.");
-    }
-  }
+        log("Device connected successfully.");
+        console.log("Device object:", device); // Debug log for the device object
+      } catch (error) {
+        log("Failed to connect to device.");
+        console.error(error); // Log the error for debugging
+      }
+   }
     async function eraseFirmware() {
       if (!device) return log("❌ No device connected. Connect first!");
       log("Erasing firmware...");
@@ -330,6 +332,7 @@
         log("✔ Firmware erased successfully!");
       } catch (error) {
         log("❌ Error erasing firmware: " + error.message);
+        console.error(error); // Log the error for debugging
       }
     }
 
@@ -338,6 +341,7 @@
       const firmwareUrl = document.getElementById("firmwareVersion").value;
       log("Downloading firmware...");
       try {
+        console.log("Firmware URL:", firmwareUrl); // Debug log for the firmware URL
         const response = await fetch(firmwareUrl);
         const firmwareData = await response.arrayBuffer();
         log("Uploading firmware to device...");
@@ -350,6 +354,7 @@
         log("✔ Firmware uploaded successfully!");
       } catch (error) {
         log("❌ Error uploading firmware: " + error.message);
+        console.error(error); // Log the error for debugging
       }
     }
 
