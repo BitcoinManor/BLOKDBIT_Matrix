@@ -323,8 +323,8 @@
         const response = await fetch(firmwareUrl);
         const firmwareData = await response.arrayBuffer();
         log("Uploading firmware to device...");
-        const transport = new ESPLoader.WebSerialTransport(device);
-        const esploader = new ESPLoader(transport, "esp32");
+        const transport = new window.esptool.Transport(device);
+        const esploader = new window.esptool.ESPLoader(transport, "esp32");
         await transport.connect();
         await esploader.initialize();
         await esploader.flashData(new Uint8Array(firmwareData));
