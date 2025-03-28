@@ -317,6 +317,12 @@
       }
    }
     async function eraseFirmware() {
+      console.log("esptool-js loaded:", window.esptool); // Debug log for esptool-js
+      if (!window.esptool) {
+        log("❌ esptool-js not loaded. Please check the script source.");
+        return;
+      }
+     
       if (!device) return log("❌ No device connected. Connect first!");
       log("Erasing firmware...");
 
@@ -337,9 +343,16 @@
     }
 
     async function uploadFirmware() {
+      console.log("esptool-js loaded:", window.esptool); // Debug log
+      if (!window.esptool) {
+        log("❌ esptool-js not loaded. Please check the script source.");
+        return;
+      }
+
       if (!device) return log("❌ No device connected. Connect first!");
       const firmwareUrl = document.getElementById("firmwareVersion").value;
       log("Downloading firmware...");
+
       try {
         console.log("Firmware URL:", firmwareUrl); // Debug log for the firmware URL
         const response = await fetch(firmwareUrl);
@@ -347,10 +360,12 @@
         log("Uploading firmware to device...");
         const transport = new window.esptool.Transport(device);
         const esploader = new window.esptool.ESPLoader(transport, "esp32");
+
         await transport.connect();
         await esploader.initialize();
         await esploader.flashData(new Uint8Array(firmwareData));
         await transport.disconnect();
+
         log("✔ Firmware uploaded successfully!");
       } catch (error) {
         log("❌ Error uploading firmware: " + error.message);
@@ -366,6 +381,12 @@
         timezone: document.getElementById("timezone").value,
         deviceModel: document.getElementById("deviceModel").value
       };
+
+      // Log the saved configuration to the console
+      console.log("Configuration saved:", config);
+      log("✔ Configuration saved successfully!");
+
+      // Log the configuration to the UI
       log("\nConfig saved: " + JSON.stringify(config, null, 2));
     }
 
