@@ -6,9 +6,6 @@
   <link rel="icon" href="assets/blokdbit_logo_icon.png" type="image/png">
   <title>BLOKDBIT Web Flasher</title>
 
-  <!-- Local esptool-js (hosted in /libs folder) -->
-  <script type="module" src="libs/bundle.js"></script>
-
   
 
   <style>
@@ -285,7 +282,13 @@
     <small>© 2025 BLOKDBIT Web Flasher. All rights reserved. Maintained by Bitcoin Manor.</small>
   </div>
 
-  <script>
+
+  
+  <script type="module">
+    import { ESPLoader } from './libs/bundle.js';
+
+
+    
     function togglePopup(id) {
       document.getElementById(id).classList.toggle("show");
     }
@@ -320,8 +323,7 @@
    }
    async function eraseFirmware() {
   console.log("Device object:", device); // Debug log for the device
-  console.log("ESPLoader (window):", typeof window.ESPLoader); // Debug ESPLoader from window
-
+  console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
 
   if (typeof ESPLoader === "undefined") {
     log("❌ esptool-js not loaded. Please check the script source.");
@@ -336,8 +338,8 @@
   log("Erasing firmware...");
 
   try {
-    const transport = new window.ESPLoader.WebSerialTransport(device);
-    const esploader = new window.ESPLoader(transport, "esp32");
+    const transport = new ESPLoader.WebSerialTransport(device);
+    const esploader = new ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
@@ -361,8 +363,7 @@
 
 async function uploadFirmware() {
   console.log("Device object:", device); // Debug log for the device
-  console.log("ESPLoader (window):", typeof window.ESPLoader); // Debug ESPLoader from window
-
+  console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
 
   if (typeof ESPLoader === "undefined") {
     log("❌ esptool-js not loaded. Please check the script source.");
@@ -384,8 +385,8 @@ async function uploadFirmware() {
     console.log("Firmware downloaded:", firmwareData);
 
     log("Uploading firmware to device...");
-    const transport = new window.ESPLoader.WebSerialTransport(device);
-    const esploader = new window.ESPLoader(transport, "esp32");
+    const transport = new ESPLoader.WebSerialTransport(device);
+    const esploader = new ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
