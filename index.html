@@ -350,8 +350,19 @@
     await transport.connect();
     console.log("Transport connected.");
 
+    await transport.connect();
+    console.log("Transport connected.");
+
+    if (!esploader || typeof esploader.initialize !== "function") {
+    log("❌ ESPLoader failed to initialize. Check transport or library.");
+    console.error("Invalid esploader object:", esploader);
+    return;
+  }
+
     await esploader.initialize();
     console.log("ESPLoader initialized.");
+
+
 
     await esploader.eraseFlash();
     console.log("Flash erased.");
@@ -397,8 +408,15 @@ async function uploadFirmware() {
     await transport.connect();
     console.log("Transport connected.");
 
+    if (!esploader || typeof esploader.initialize !== "function") {
+    log("❌ ESPLoader failed to initialize. Check transport or library.");
+    console.error("Invalid esploader object:", esploader);
+    return;
+  }
+
     await esploader.initialize();
     console.log("ESPLoader initialized.");
+
 
     await esploader.flashData(new Uint8Array(firmwareData));
     console.log("Firmware flashed.");
