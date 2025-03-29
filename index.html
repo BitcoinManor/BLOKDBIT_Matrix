@@ -7,7 +7,7 @@
   <title>BLOKDBIT Web Flasher</title>
 
   <!-- Local esptool-js (hosted in /libs folder) -->
-  <script src="libs/esptool.min.js"></script>
+  <script src="libs/bundle.js"></script>
   
 
   <style>
@@ -319,7 +319,8 @@
    }
    async function eraseFirmware() {
   console.log("Device object:", device); // Debug log for the device
-  console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
+  console.log("ESPLoader (window):", typeof window.ESPLoader); // Debug ESPLoader from window
+
 
   if (typeof ESPLoader === "undefined") {
     log("❌ esptool-js not loaded. Please check the script source.");
@@ -334,8 +335,8 @@
   log("Erasing firmware...");
 
   try {
-    const transport = new ESPLoader.WebSerialTransport(device);
-    const esploader = new ESPLoader(transport, "esp32");
+    const transport = new window.ESPLoader.WebSerialTransport(device);
+    const esploader = new window.ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
@@ -359,7 +360,8 @@
 
 async function uploadFirmware() {
   console.log("Device object:", device); // Debug log for the device
-  console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
+  console.log("ESPLoader (window):", typeof window.ESPLoader); // Debug ESPLoader from window
+
 
   if (typeof ESPLoader === "undefined") {
     log("❌ esptool-js not loaded. Please check the script source.");
@@ -381,8 +383,8 @@ async function uploadFirmware() {
     console.log("Firmware downloaded:", firmwareData);
 
     log("Uploading firmware to device...");
-    const transport = new ESPLoader.WebSerialTransport(device);
-    const esploader = new ESPLoader(transport, "esp32");
+    const transport = new window.ESPLoader.WebSerialTransport(device);
+    const esploader = new window.ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
