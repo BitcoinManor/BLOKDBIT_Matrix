@@ -465,7 +465,16 @@ async function uploadFirmware() {
       URL.revokeObjectURL(url);
     }
 
-    window.onload = updateFirmwareOptions;
+    window.onload = () => updateFirmwareOptions();
+    window.uploadFirmware = uploadFirmware;
+    window.eraseFirmware = eraseFirmware;
+    window.connectDevice = connectDevice;
+    window.togglePopup = togglePopup;
+    window.toggleTheme = toggleTheme;
+    window.saveConfig = saveConfig;
+    window.updateFirmwareOptions = updateFirmwareOptions;
+    window.downloadLog = downloadLog;
+
   </script>
 </body>
 </html>
