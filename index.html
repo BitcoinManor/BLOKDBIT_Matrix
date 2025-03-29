@@ -6,6 +6,8 @@
   <link rel="icon" href="assets/blokdbit_logo_icon.png" type="image/png">
   <title>BLOKDBIT Web Flasher</title>
 
+  <script type="module" src="libs/bundle.js"></script>
+
   
 
   <style>
@@ -285,7 +287,8 @@
 
   
   <script type="module">
-    import { ESPLoader, WebSerialTransport } from './libs/bundle.js';
+    const WebSerialTransport = window.ESPLoader.WebSerialTransport;
+    const ESPLoader = window.ESPLoader;
 
 
 
