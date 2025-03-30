@@ -8,8 +8,11 @@
 
   <script type="module" src="libs/bundle.js"></script>
 
-
-
+  <!-- Debug logs to verify ESPLoader and WebSerialTransport -->
+  <script type="module">
+    console.log("window.ESPLoader:", window.ESPLoader);
+    console.log("window.WebSerialTransport:", window.WebSerialTransport);
+  </script>
   
 
   <style>
@@ -171,7 +174,7 @@
       margin-bottom: 10px;
       line-height: 1.6em;
     }
- // </style>
+  </style>
 </head>
 <body>
   <div class="navbar">
@@ -288,9 +291,10 @@
 
 
   
-  <script>
-    //const WebSerialTransport = ESPLoader.WebSerialTransport;
-    //console.log("BLOKDBIT Web Flasher module loaded successfully 🚀");
+  <script type="module">
+    const WebSerialTransport = window.ESPLoader.WebSerialTransport;
+    const ESPLoader = window.ESPLoader;
+
 
 
     
@@ -350,19 +354,8 @@
     await transport.connect();
     console.log("Transport connected.");
 
-    await transport.connect();
-    console.log("Transport connected.");
-
-    if (!esploader || typeof esploader.initialize !== "function") {
-    log("❌ ESPLoader failed to initialize. Check transport or library.");
-    console.error("Invalid esploader object:", esploader);
-    return;
-  }
-
     await esploader.initialize();
     console.log("ESPLoader initialized.");
-
-
 
     await esploader.eraseFlash();
     console.log("Flash erased.");
@@ -408,15 +401,8 @@ async function uploadFirmware() {
     await transport.connect();
     console.log("Transport connected.");
 
-    if (!esploader || typeof esploader.initialize !== "function") {
-    log("❌ ESPLoader failed to initialize. Check transport or library.");
-    console.error("Invalid esploader object:", esploader);
-    return;
-  }
-
     await esploader.initialize();
     console.log("ESPLoader initialized.");
-
 
     await esploader.flashData(new Uint8Array(firmwareData));
     console.log("Firmware flashed.");
