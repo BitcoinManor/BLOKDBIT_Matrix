@@ -309,6 +309,9 @@
       document.getElementById("themeToggle").innerText = isDark ? "☀️" : "🌙";
     }
 
+
+    // Initialize the device variable to store the connected device
+    // This will be used to manage the connection and disconnection of the device
     let device;
 
     async function connectDevice() {
@@ -330,11 +333,18 @@
         console.error(error); // Log the error for debugging
       }
    }
-   async function eraseFirmware() {
+
+
+
+
+  // Function to erase firmware
+  // This function will be called when the "Erase Firmware" button is clicked
+async function eraseFirmware() {
   console.log("Device object:", device); // Debug log for the device
   console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
+  console.log("WebSerialTransport:", typeof ESPLoader.WebSerialTransport); // Debug log for WebSerialTransport
 
-  if (typeof ESPLoader === "undefined") {
+  if (!ESPLoader || !ESPLoader.WebSerialTransport) {
     log("❌ esptool-js not loaded. Please check the script source.");
     return;
   }
@@ -347,7 +357,7 @@
   log("Erasing firmware...");
 
   try {
-    const transport = new WebSerialTransport(device);
+    const transport = new ESPLoader.WebSerialTransport(device); // Use ESPLoader.WebSerialTransport
     const esploader = new ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
@@ -370,11 +380,16 @@
   }
 }
 
+
+  // Function to upload firmware
+  // This function will be called when the "Flash Firmware" button is clicked
+  // It will download the firmware from the selected URL and upload it to the device
 async function uploadFirmware() {
   console.log("Device object:", device); // Debug log for the device
   console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
+  console.log("WebSerialTransport:", typeof ESPLoader.WebSerialTransport); // Debug log for WebSerialTransport
 
-  if (typeof ESPLoader === "undefined") {
+  if (!ESPLoader || !ESPLoader.WebSerialTransport) {
     log("❌ esptool-js not loaded. Please check the script source.");
     return;
   }
@@ -394,7 +409,7 @@ async function uploadFirmware() {
     console.log("Firmware downloaded:", firmwareData);
 
     log("Uploading firmware to device...");
-    const transport = new WebSerialTransport(device);
+    const transport = new ESPLoader.WebSerialTransport(device); // Use ESPLoader.WebSerialTransport
     const esploader = new ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
@@ -417,6 +432,9 @@ async function uploadFirmware() {
   }
 }
 
+
+    // Function to save configuration
+    // This function will be called when the "Save Configuration" button is clicked
     function saveConfig() {
       const config = {
         wifiSSID: document.getElementById("wifiSSID").value,
@@ -434,6 +452,9 @@ async function uploadFirmware() {
       log("\nConfig saved: " + JSON.stringify(config, null, 2));
     }
 
+
+    // Function to update firmware options based on the selected device model
+    // This function will be called when the device model is changed in the dropdown
     function updateFirmwareOptions() {
       const model = document.getElementById("deviceModel").value;
       const firmwareDropdown = document.getElementById("firmwareVersion");
