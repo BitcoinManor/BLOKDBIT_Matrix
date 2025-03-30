@@ -344,7 +344,7 @@ async function eraseFirmware() {
   console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
   console.log("WebSerialTransport:", typeof ESPLoader.WebSerialTransport); // Debug log for WebSerialTransport
 
-  if (!ESPLoader || !ESPLoader.WebSerialTransport) {
+  if (!ESPLoader || !WebSerialTransport) {
     log("❌ esptool-js not loaded. Please check the script source.");
     return;
   }
