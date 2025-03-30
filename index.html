@@ -292,8 +292,10 @@
 
   
   <script type="module">
-    const WebSerialTransport = window.ESPLoader.WebSerialTransport;// ✅
     const ESPLoader = window.ESPLoader;
+    const WebSerialTransport = window.WebSerialTransport;
+
+
 
 
 
@@ -342,7 +344,8 @@
 async function eraseFirmware() {
   console.log("Device object:", device); // Debug log for the device
   console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
-  console.log("WebSerialTransport:", typeof ESPLoader.WebSerialTransport); // Debug log for WebSerialTransport
+  console.log("WebSerialTransport:", typeof WebSerialTransport); // ✅
+
 
   if (!ESPLoader || !WebSerialTransport) {
     log("❌ esptool-js not loaded. Please check the script source.");
@@ -358,7 +361,7 @@ async function eraseFirmware() {
 
   try {
     const transport = new WebSerialTransport(device); // Use Transport
-    const esploader = new ESPLoader(transport, "esp32");
+    const esploader = new ESPLoader(transport, true);
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
@@ -387,9 +390,10 @@ async function eraseFirmware() {
 async function uploadFirmware() {
   console.log("Device object:", device); // Debug log for the device
   console.log("ESPLoader:", typeof ESPLoader); // Debug log for ESPLoader
-  console.log("WebSerialTransport:", typeof ESPLoader.WebSerialTransport); // Debug log for WebSerialTransport
+  console.log("WebSerialTransport:", typeof WebSerialTransport); // ✅
 
-  if (!ESPLoader || !ESPLoader.WebSerialTransport) {
+
+  if (!ESPLoader || !WebSerialTransport) {
     log("❌ esptool-js not loaded. Please check the script source.");
     return;
   }
@@ -410,7 +414,7 @@ async function uploadFirmware() {
 
     log("Uploading firmware to device...");
     const transport = new WebSerialTransport(device); // Use Transport
-    const esploader = new ESPLoader(transport, "esp32");
+    const esploader = new ESPLoader(transport, true);
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
