@@ -362,7 +362,7 @@ async function eraseFirmware() {
 
   try {
     const transport = new WebSerialTransport(device); // Use Transport
-    const esploader = new ESPLoader(transport, true);
+    const esploader = new ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
@@ -415,7 +415,7 @@ async function uploadFirmware() {
 
     log("Uploading firmware to device...");
     const transport = new WebSerialTransport(device); // Use Transport
-    const esploader = new ESPLoader(transport, true);
+    const esploader = new ESPLoader(transport, "esp32");
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
