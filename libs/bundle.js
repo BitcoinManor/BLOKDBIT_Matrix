@@ -7845,6 +7845,10 @@ var esptool = (() => {
   init_rom();
   return __toCommonJS(index_exports);
 })();
+
+window.ESPLoader = esptool.ESPLoader;
+window.WebSerialTransport = esptool.Transport;
+
 /*! Bundled license information:
 
 pako/dist/pako.esm.mjs:
