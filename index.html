@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="assets/blokdbit_logo_icon.png" type="image/png">
-  <title>BLOKDBIT Web Flasher</title>
+  <title>🚀 BLOKDBIT Web Flasher | Flash Your ₿itcoin Dashboard in Seconds</title>
+
 
   <script src="libs/bundle.js"></script>
 
@@ -175,6 +176,34 @@
       margin-bottom: 10px;
       line-height: 1.6em;
     }
+      /* 🔁 Blinking Erase Progress Indicator */
+    #erasingIndicator {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #fca420;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    #erasingIndicator {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #fca420;
+      animation: blink 1s infinite;
+      font-weight: bold;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.1; }
+      100% { opacity: 1; }
+    }
+  
   </style>
 </head>
 <body>
@@ -220,7 +249,8 @@
       <img src="assets/blokdbit_logo_icon.png" alt="BLOKDBIT" style="height: 75px; vertical-align: middle; margin-right: 21px;">
       BLOKDBIT Web Flasher
     </h1>
-    <p>⚡ Plug in your BLOKDBIT. Pick your model. Flash it. Done. ⚡</p>
+    <p>✨ Plug in your BLOKDBIT. Select your model. Flash the firmware. Your ₿itcoin Journey Begins! ✨</p>
+
   </div>
 
   <div class="grid-container">
@@ -360,6 +390,13 @@ async function eraseFirmware() {
 
   log("Erasing firmware...");
 
+    const indicator = document.createElement("div");
+    indicator.id = "erasingIndicator";
+    indicator.textContent = "₿ 🧨 Purging firmware... 🕳️ Entering the matrix.";
+    document.getElementById("log").appendChild(indicator);
+
+  
+
   try {
     const transport = new WebSerialTransport(device); // ✅ Construct transport
 
@@ -383,9 +420,15 @@ async function eraseFirmware() {
 
     await esploader.eraseFlash();
     console.log("Flash erased.");
+    log("⚙️ Initial erase complete! You're ready to flash your firmware.");
+    log("👉 Proceed to Step 4️⃣ and select your firmware version.");
+
 
     await transport.disconnect();
     console.log("Transport disconnected.");
+
+    document.getElementById("erasingIndicator")?.remove();
+
 
     log("✔ Firmware erased successfully!");
   } catch (error) {
@@ -437,8 +480,13 @@ async function uploadFirmware() {
 
     console.log("🚀 Starting flash process (⚡Connecting your ₿itcoin Journey!!)...");
 
-    //await transport.connect(); //commented out as it was causing port already open issues
+  if (!device.readable || !device.writable) {
+    await transport.connect();
     console.log("Transport connected.");
+  } else {
+    console.log("🔁 Serial port already open. Skipping transport.connect().");
+}
+
 
     await esploader.connect();
     console.log("ESPLoader initialized.");
