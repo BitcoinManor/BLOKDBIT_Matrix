@@ -375,9 +375,6 @@ async function eraseFirmware() {
     console.log("📡 Starting ESPLoader connect...");
     
 
-    await transport.connect();
-    console.log("Transport connected.");
-
     await esploader.connect();
     console.log("🔗 Connected. Proceeding to initialize...");
 
@@ -443,7 +440,7 @@ async function uploadFirmware() {
     //await transport.connect(); //commented out as it was causing port already open issues
     console.log("Transport connected.");
 
-    await esploader.initialize();
+    await esploader.connect();
     console.log("ESPLoader initialized.");
 
     log("💥 Initiating open-source sovereignty protocol...");
