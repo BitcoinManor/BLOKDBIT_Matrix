@@ -317,10 +317,10 @@
     // This will be used to manage the connection and disconnection of the device
     let device;
 
-    async function connectDevice() {
-      try {
-        device = await navigator.serial.requestPort();
-        await device.open({ baudRate: 115200 });
+async function connectDevice() {
+  try {
+    device = await navigator.serial.requestPort();  // ✅ Only this line remains
+
         document.getElementById("deviceStatus").innerText = "🟢 Connected";
         // ✅ Enable model dropdown
         const modelDropdown = document.getElementById("deviceModel");
