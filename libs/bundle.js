@@ -7848,8 +7848,8 @@ var esptool = (() => {
 
 
 
-window.ESPLoader = ESPLoader;
-window.WebSerialTransport = Transport;
+window.ESPLoader = esptool.ESPLoader;
+window.WebSerialTransport = esptool.Transport;
 
 /*!
  * BLOKDBIT Web Flasher Bundle
