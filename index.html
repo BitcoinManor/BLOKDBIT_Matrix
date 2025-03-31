@@ -329,7 +329,7 @@ async function connectDevice() {
           log("Model selector enabled.");
       }
 
-        log("Device connected successfully.");
+        log("🔌 Connected to ₿LOKD₿IT device.");
         console.log("Device object:", device); // Debug log for the device object
       } catch (error) {
         log("Failed to connect to device.");
@@ -372,11 +372,17 @@ async function eraseFirmware() {
     const esploader = new ESPLoader({ transport: transport, baudrate: 115200 });
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
+    console.log("📡 Starting ESPLoader connect...");
+    
+
     await transport.connect();
     console.log("Transport connected.");
 
-    await esploader.initialize();
-    console.log("ESPLoader initialized.");
+    await esploader.connect();
+    console.log("🔗 Connected. Proceeding to initialize...");
+
+    log("💥 Initiating open-source sovereignty protocol...");
+
 
     await esploader.eraseFlash();
     console.log("Flash erased.");
@@ -420,7 +426,7 @@ async function uploadFirmware() {
     const firmwareData = await response.arrayBuffer();
     console.log("Firmware downloaded:", firmwareData);
 
-    log("Uploading firmware to device...");
+    log("Uploading firmware to device ₿...");
     const transport = new WebSerialTransport(device); // ✅ Construct transport
 
     // 🧪 Debugging logs — right after transport is created
@@ -432,19 +438,25 @@ async function uploadFirmware() {
     const esploader = new ESPLoader({ transport: transport, baudrate: 115200 });
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
-    await transport.connect();
+    console.log("🚀 Starting flash process (⚡Connecting your ₿itcoin Journey!!)...");
+
+    //await transport.connect(); //commented out as it was causing port already open issues
     console.log("Transport connected.");
 
     await esploader.initialize();
     console.log("ESPLoader initialized.");
 
+    log("💥 Initiating open-source sovereignty protocol...");
+
     await esploader.flashData(new Uint8Array(firmwareData));
     console.log("Firmware flashed.");
+
+    console.log("✅ Flash Complete, ₿ Journey about to begin!.");
 
     await transport.disconnect();
     console.log("Transport disconnected.");
 
-    log("✔ Firmware uploaded successfully!");
+    log("₿ Self-sovereign mode enabled, Firmware uploaded successfully!");
   } catch (error) {
     log("❌ Error uploading firmware: " + error.message);
     console.error("Error uploading firmware:", error);
