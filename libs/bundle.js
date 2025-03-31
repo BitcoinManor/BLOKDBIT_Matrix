@@ -6681,6 +6681,16 @@ var esptool = (() => {
       this.IS_STUB = false;
       this.FLASH_WRITE_SIZE = 16384;
       this.transport = options.transport;
+      console.log("\u2705 [ESPLoader] Transport object received:", this.transport);
+      console.log("\u2705 [ESPLoader] typeof getInfo:", typeof this.transport.getInfo);
+      try {
+        const infoResult = this.transport.getInfo();
+        console.log("\u2705 [ESPLoader] getInfo() result:", infoResult);
+        this.info("Serial port " + infoResult);
+      } catch (err2) {
+        console.error("\u274C [ESPLoader] Error calling getInfo():", err2);
+        this.info("Serial port [getInfo() failed]");
+      }
       this.baudrate = options.baudrate;
       this.resetConstructors = {
         classicReset: (transport, resetDelay) => new ClassicReset(transport, resetDelay),
@@ -6720,7 +6730,6 @@ var esptool = (() => {
         this.resetConstructors.usbJTAGSerialReset = options.resetConstructors?.usbJTAGSerialReset;
       }
       this.info("esptool.js");
-      this.info("Serial port " + this.transport.getInfo());
     }
     _sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
@@ -7845,24 +7854,6 @@ var esptool = (() => {
   init_rom();
   return __toCommonJS(index_exports);
 })();
-
-
-
-window.ESPLoader = esptool.ESPLoader;
-window.WebSerialTransport = esptool.Transport;
-
-/*!
- * BLOKDBIT Web Flasher Bundle
- * Version: v1.1
- * Built with: esbuild
- * Device Support: BLOKDBIT Matrix, Spark
- * Build Date: 2025-03-30
- * © Bitcoin Manor – github.com/BitcoinManor
- *
- * Note: Pulse, Edge, and Infinity are Raspberry Pi–based and not flashable via this web tool.
- */
-
-
 /*! Bundled license information:
 
 pako/dist/pako.esm.mjs:
