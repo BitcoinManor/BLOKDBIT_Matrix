@@ -369,7 +369,7 @@ async function eraseFirmware() {
     console.log("🧪 Debug: getInfo call result:", transport?.getInfo?.());
 
     // Then continue as usual
-    const esploader = new ESPLoader(transport, "esp32");
+    const esploader = new ESPLoader({ transport: transport, baudrate: 115200 });
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
@@ -429,7 +429,7 @@ async function uploadFirmware() {
     console.log("🧪 Debug: getInfo call result:", transport?.getInfo?.());
 
     // Then continue as usual
-    const esploader = new ESPLoader(transport, "esp32");
+    const esploader = new ESPLoader({ transport: transport, baudrate: 115200 });
     console.log("Transport and ESPLoader initialized:", transport, esploader);
 
     await transport.connect();
