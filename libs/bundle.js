@@ -7854,6 +7854,22 @@ var esptool = (() => {
   init_rom();
   return __toCommonJS(index_exports);
 })();
+
+window.ESPLoader = esptool.ESPLoader;
+window.WebSerialTransport = esptool.Transport;
+
+/*!
+ * BLOKDBIT Web Flasher Bundle
+ * Version: v1.1
+ * Built with: esbuild
+ * Device Support: BLOKDBIT Matrix, Spark
+ * Build Date: 2025-03-30
+ * © Bitcoin Manor – github.com/BitcoinManor
+ */
+
+
+
+
 /*! Bundled license information:
 
 pako/dist/pako.esm.mjs:
