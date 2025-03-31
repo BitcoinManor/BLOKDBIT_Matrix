@@ -7846,8 +7846,27 @@ var esptool = (() => {
   return __toCommonJS(index_exports);
 })();
 
-window.ESPLoader = esptool.ESPLoader;
-window.WebSerialTransport = esptool.Transport;
+// Expose classes globally in both ways
+window.esptool = {
+  ESPLoader: ESPLoader,
+  Transport: Transport,
+  WebSerialTransport: Transport // Alias for compatibility
+};
+
+window.ESPLoader = ESPLoader;
+window.WebSerialTransport = Transport;
+
+/*!
+ * BLOKDBIT Web Flasher Bundle
+ * Version: v1.1
+ * Built with: esbuild
+ * Device Support: BLOKDBIT Matrix, Spark
+ * Build Date: 2025-03-30
+ * © Bitcoin Manor – github.com/BitcoinManor
+ *
+ * Note: Pulse, Edge, and Infinity are Raspberry Pi–based and not flashable via this web tool.
+ */
+
 
 /*! Bundled license information:
 
