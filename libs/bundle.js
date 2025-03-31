@@ -7846,12 +7846,7 @@ var esptool = (() => {
   return __toCommonJS(index_exports);
 })();
 
-// Expose classes globally in both ways
-window.esptool = {
-  ESPLoader: ESPLoader,
-  Transport: Transport,
-  WebSerialTransport: Transport // Alias for compatibility
-};
+
 
 window.ESPLoader = ESPLoader;
 window.WebSerialTransport = Transport;
