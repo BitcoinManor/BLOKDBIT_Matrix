@@ -18,6 +18,58 @@ const char* wifiPASS = "notachance";  //FILL in your wifiPASS between the ""
 const char* BTC_API = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd";
 const char* BLOCK_API = "https://blockchain.info/q/getblockcount";
 const char* FEES_API = "https://mempool.space/api/v1/fees/recommended";
+const char* MEMPOOL_BLOCKS_API = "https://mempool.space/api/blocks";
+const char* BLOCKSTREAM_TX_API_BASE = "https://blockstream.info/api/block/";
+
+
+//Fetching Miner
+String minerName = "Unknown";
+
+struct MinerTag {
+  const char* tag;
+  const char* name;
+};
+
+const MinerTag knownTags[] = {
+  { "f2pool", "F2Pool" }, { "antpool", "AntPool" }, { "viabtc", "ViaBTC" },
+  { "poolin", "Poolin" }, { "btccom", "BTC.com" }, { "binance", "Binance Pool" },
+  { "carbon", "Carbon Negative" }, { "slush", "Slush Pool" }, { "braiins", "Braiins Pool" },
+  { "foundry", "Foundry USA" }, { "ocean", "Ocean Pool" }, { "mara", "Marathon" },
+  { "marathon", "Marathon" }, { "luxor", "Luxor" }, { "ultimus", "ULTIMUSPOOL" },
+  { "novablock", "NovaBlock" }, { "sigma", "SigmaPool" }, { "spider", "SpiderPool" },
+  { "tera", "TERA Pool" }, { "okex", "OKEx Pool" }, { "kucoin", "KuCoin Pool" },
+  { "sbi", "SBI Crypto" }, { "btctop", "BTC.TOP" }, { "emcd", "EMCD Pool" },
+  { "secpool", "SECPOOL" }, { "hz", "HZ Pool" }, { "solo.ckpool", "Solo CKPool" },
+  { "solopool", "Solo Pool" }, { "solo", "Solo Miner" }, { "bitaxe", "Bitaxe Solo Miner" },
+  { "node.pw", "Node.PW" }, { "/axe/", "Bitaxe Solo Miner" }
+};
+
+String hexToAscii(const String& hex) {
+  String ascii = "";
+  for (unsigned int i = 0; i < hex.length(); i += 2) {
+    String byteString = hex.substring(i, i + 2);
+    char c = (char) strtol(byteString.c_str(), nullptr, 16);
+    if (isPrintable(c)) ascii += c;
+  }
+  return ascii;
+}
+
+String identifyMiner(String scriptSig) {
+  scriptSig.toLowerCase();
+  for (const auto& tag : knownTags) {
+    if (scriptSig.indexOf(tag.tag) != -1) return tag.name;
+  }
+  if (scriptSig.length() > 0) {
+    int maxLen = 24;
+    String preview = scriptSig.substring(0, min((int)scriptSig.length(), maxLen));
+    return "Unknown (" + preview + ")";
+  }
+  return "Unknown";
+}
+
+
+
+
 
 // ⏳ NTP Server for Time Sync (Mountain Standard Time)
 const char* ntpServer = "pool.ntp.org";
@@ -44,6 +96,10 @@ char btcText[16], blockHeightText[16], feeText[16], satsText[16], timeText[16], 
 
 MD_Parola P = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 unsigned long lastFetchTime = 0;
+int brightnessLevel = 3;  // 0 = dimmest, 15 = brightest
+
+
+
 
 // 🎯 Messages for Display
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
@@ -51,8 +107,9 @@ char *msg[] = {
   "BlokdBit Matrix!",
   "Bitcoin Price ",
   //"Sats Per Dollar",
-  "Moscow Time",
+  "Moscow   Time ",
   "Block   Height",
+  "Mined By Minor ",
   "Fee Rate  ",
   "Current Time",
   "Current Date"
@@ -100,6 +157,45 @@ void fetchBlockHeight() {
     }
     http.end();
 }
+
+//  FETCH MINER
+void fetchMinerName() {
+  HTTPClient http;
+  Serial.println("🔄 Fetching latest block hash...");
+  http.begin(MEMPOOL_BLOCKS_API);
+  int httpCode = http.GET();
+  if (httpCode == 200) {
+    String payload = http.getString();
+    DynamicJsonDocument doc(2048);
+    deserializeJson(doc, payload);
+    String blockHash = doc[0]["id"];
+    http.end();
+
+    Serial.printf("✅ Latest Block Hash: %s\n", blockHash.c_str());
+    String txEndpoint = BLOCKSTREAM_TX_API_BASE + blockHash + "/txs";
+    http.begin(txEndpoint);
+    httpCode = http.GET();
+    if (httpCode == 200) {
+      String txPayload = http.getString();
+      DynamicJsonDocument txDoc(8192);
+      deserializeJson(txDoc, txPayload);
+      String scriptSig = txDoc[0]["vin"][0]["scriptsig"].as<String>();
+      String asciiTag = hexToAscii(scriptSig);
+      minerName = identifyMiner(asciiTag);
+      Serial.printf("✅ Mined By: %s\n", minerName.c_str());
+    } else {
+      Serial.println("❌ Failed to fetch coinbase TX");
+      minerName = "Loading...";
+    }
+  } else {
+    Serial.println("❌ Failed to fetch block hash");
+    minerName = "Loading...";
+  }
+  http.end();
+}
+
+
+
 
 // 📡 Fetch Fee Rate
 void fetchFeeRate() {
@@ -162,11 +258,13 @@ void setup() {
     // 📡 Fetch Initial Data
     fetchBitcoinData();
     fetchBlockHeight();
+    fetchMinerName();
     fetchFeeRate();
     lastFetchTime = millis();
 
     // 🔠 Setup Matrix Display
     P.begin(MAX_ZONES);
+    P.setIntensity(brightnessLevel);  // 💡 Brightness set via variable 
     P.setZone(ZONE_LOWER, 0, ZONE_SIZE - 1);
     P.setFont(ZONE_LOWER, BigFontLower);
     P.setZone(ZONE_UPPER, ZONE_SIZE, MAX_DEVICES - 1);
@@ -181,6 +279,7 @@ void loop() {
     if (millis() - lastFetchTime > FETCH_INTERVAL) {
         fetchBitcoinData();
         fetchBlockHeight();
+        fetchMinerName();
         fetchFeeRate();
         fetchTime();
         lastFetchTime = millis();
@@ -234,36 +333,39 @@ if (P.getZoneStatus(ZONE_LOWER) && P.getZoneStatus(ZONE_UPPER)) {
             P.displayZoneText(ZONE_UPPER, blockHeightText, PA_LEFT, SCROLL_SPEED, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
             break;
 
-        case 7:  // Fee Rate Label (scrolls + pauses centered)
-            Serial.println("🔄 Updating Display: Fee Rate (sats/vB)");
+        case 7:  // Block Solved By Miner (scrolls + pauses centered)
+            Serial.println("🔄 Updating Display: Miner");
             P.displayZoneText(ZONE_LOWER, msg[4], PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
             P.displayZoneText(ZONE_UPPER, msg[4], PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
             break;
+            
 
-        case 8:  // Fee Rate Value (scrolls continuously)
+        case 8: // Miners name
+            Serial.printf("🔄 Updating Display: Solved By %s\n", minerName.c_str());
+            P.displayZoneText(ZONE_LOWER, minerName.c_str(), PA_LEFT, SCROLL_SPEED, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
+            P.displayZoneText(ZONE_UPPER, minerName.c_str(), PA_LEFT, SCROLL_SPEED, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
+            break;          
+
+        case 9:  // Fee Rate Label (scrolls + pauses centered)
+            Serial.println("🔄 Updating Display: Fee Rate (sats/vB)");
+            P.displayZoneText(ZONE_LOWER, msg[5], PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
+            P.displayZoneText(ZONE_UPPER, msg[5], PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
+            break;
+
+        case 10:  // Fee Rate Value (scrolls continuously)
             Serial.printf("🔄 Updating Display: Fee Rate %s\n", feeText);
             P.displayZoneText(ZONE_LOWER, feeText, PA_LEFT, SCROLL_SPEED, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
             P.displayZoneText(ZONE_UPPER, feeText, PA_LEFT, SCROLL_SPEED, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
             break;
 
-        //case 9:  // Date Label (scrolls + pauses centered)
-            //Serial.println("🔄 Updating Display: Date");
-           // P.displayZoneText(ZONE_LOWER, "Date", PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
-            //P.displayZoneText(ZONE_UPPER, "Date", PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
-           // break;
 
-         case 10:  // 📅 Date (Pause Centered)
+        case 11:  // 📅 Date (Pause Centered)
             Serial.printf("🔄 Updating Display: 📅 %s\n", dateText);
             P.displayZoneText(ZONE_LOWER, dateText, PA_CENTER, SCROLL_SPEED, 5000, PA_PRINT, PA_NO_EFFECT);
             P.displayZoneText(ZONE_UPPER, dateText, PA_CENTER, SCROLL_SPEED, 5000, PA_PRINT, PA_NO_EFFECT);
             break;
 
-        //case 11:  // Time Label (scrolls + pauses centered)
-           // Serial.println("🔄 Updating Display: Time");
-            //P.displayZoneText(ZONE_LOWER, "Time", PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
-           // P.displayZoneText(ZONE_UPPER, "Time", PA_CENTER, SCROLL_SPEED, 1000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
-           // break;
-
+    
         case 12:  // ⏰ Time (Centered, No Scroll, 5s Pause)
                 Serial.printf("🔄 Updating Display: ⏰ %s\n", timeText);
                 P.displayZoneText(ZONE_LOWER, timeText, PA_CENTER, SCROLL_SPEED, 5000, PA_PRINT, PA_NO_EFFECT);
