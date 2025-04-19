@@ -11,7 +11,7 @@ Welcome to **BLOKDBIT**, a family of beautifully designed, plug-and-play Bitcoin
 ## 🚀 Quick Links
 
 - **🔌 Flash a Device Instantly:**  
-  [BLOKDBIT Web Flasher →](https://bitcoinmanor.github.io/BlokdBit_WebFlasher/)
+  [BLOKDBIT Web Flasher →](https://bitcoinmanor.github.io/BLOKDBIT_WebFlasher/)
 
 - **📦 Order Devices & Kits:**  
   [blokdbit.com](https://blokdbit.com)
