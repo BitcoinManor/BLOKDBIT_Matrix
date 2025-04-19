@@ -65,8 +65,7 @@ The **BLOKDBIT Web Flasher** is a zero-install, browser-based tool that:
 - Flashes the correct firmware with a single click
 - Displays live flashing logs and error output
 
-👉 **Start flashing here:** [bitcoinmanor.github.io/BlokdBit-Matrix](https://bitcoinmanor.github.io/BlokdBit-Matrix/)
-
+👉 **Start flashing here:** [bitcoinmanor.github.io/BLOKDBIT_WebFlasher](https://bitcoinmanor.github.io/BLOKDBIT_WebFlasher/)
 ---
 
 ## 💻 Tech Stack
@@ -85,7 +84,7 @@ The **BLOKDBIT Web Flasher** is a zero-install, browser-based tool that:
 
 ```bash
 # 1. Clone the repo
-https://github.com/BitcoinManor/BlokdBit-Matrix.git
+https://github.com/BitcoinManor/BlokdBit_Matrix.git
 
 # 2. Open the .ino file in Arduino IDE
 BlokdBit_Matrix_FINAL_SKETCH4Flasher.ino
@@ -120,7 +119,7 @@ We encourage supporting them by contributing, using their services respectfully,
 Built by [Bitcoin Manor](https://bitcoinmanor.com) for the sovereign individual.
 
 - **Inspired by Hal Finney Ticker by Ben (arcbtc)** from the original ticker.
-- **Bitcoin data powered by CoinGecko & Mempool.space**.
+- **Bitcoin data powered by CoinGecko & Mempool.space & blockchain.info**.
 - Original Ticker Fork: `arcbtc / hal-finney-ticker`
 - LED Matrix Libraries: `MajicDesigns`
 - Thank you to the Bitcoin community
@@ -137,6 +136,6 @@ MIT License — use freely, fork often, flash everything.
 ```
 BLOKDBIT Matrix v1.1 | Bitcoin Manor
 Open Source | Web Flashable | Self-Sovereign
-https://github.com/BitcoinManor/BlokdBit-Matrix
+https://github.com/BitcoinManor/BlokdBit_Matrix
 ```
 
