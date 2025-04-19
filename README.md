@@ -2,7 +2,8 @@
 
 **Open Source. Web Flashable. Self-Sovereign.**
 
-![BLOKDBIT Banner](https://github.com/BitcoinManor/BlokdBit-Matrix/raw/main/assets/blokdbit_banner.png)
+![BLOKDBIT Banner](https://github.com/BitcoinManor/BLOKDBIT_Matrix/raw/main/assets/blokdbit_banner.png)
+
 
 Welcome to **BLOKDBIT**, a family of beautifully designed, plug-and-play Bitcoin dashboards that combine open source power with elegant hardware and blazing-fast setup. Whether you're tracking the price of Bitcoin, monitoring network fees, or running a full node—**BLOKDBIT** keeps you in sync with the signal all at a glance!!
 
