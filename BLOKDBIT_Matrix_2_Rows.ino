@@ -1,4 +1,4 @@
-// 🚀 BLOKDBIT Matrix: Dual-Row Static Display Version
+// 🚀 BLOKDBIT Matrix: Dual-Row Static Display V1.1
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
 #include <SPI.h>
@@ -367,44 +367,28 @@ void fetchMinerName() {
 void fetchTime() {
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) {
-    Serial.println("❌ Failed to fetch local time!");
-    return;
+    Serial.println("❌ Failed to fetch local time! Keeping previous timeText...");
+    return;  // Don't overwrite global time values if fetch fails
   }
 
   Serial.println("⏰ Local time fetched successfully!");
 
-  // 1) Format into a temporary buffer with %I (01–12), then strip leading ‘0’
+  // Format to HH:MMam/pm, then strip leading zero
   char buf[16];
   strftime(buf, sizeof(buf), "%I:%M%p", &timeinfo);
-  
-  Serial.print("🕒 Raw time format: ");
-  Serial.println(buf);
+  if (buf[0] == '0') memmove(buf, buf + 1, strlen(buf + 1) + 1);  // Strip leading 0
 
-  // If hour is 01–09, buf[0]=='0' → shift everything left by one
-  if (buf[0] == '0') {
-    Serial.println("🔧 Leading zero detected, removing...");
-    memmove(buf, buf + 1, strlen(buf + 1) + 1);
-  }
-
-  // Copy into your global
+  // ✅ Update globals only if time fetch succeeded
   strncpy(timeText, buf, sizeof(timeText));
   timeText[sizeof(timeText)-1] = '\0';
 
-  Serial.print("✅ Final formatted timeText: ");
-  Serial.println(timeText);
-  Serial.printf("✅ Updated Time: %s | Date: %s | Day: %s\n", timeText, dateText, dayText);
-
-
-  // 2) Date and day as before
   strftime(dateText, sizeof(dateText), "%b %d", &timeinfo);
   strftime(dayText, sizeof(dayText), "%A", &timeinfo);
 
-  Serial.print("📅 Date: ");
-  Serial.println(dateText);
-  Serial.print("📆 Day: ");
-  Serial.println(dayText);
+  Serial.printf("✅ Updated Time: %s | Date: %s | Day: %s\n", timeText, dateText, dayText);
   Serial.printf("📈 Free heap after fetch: %d bytes\n", ESP.getFreeHeap());
 }
+
 
 
 
@@ -668,10 +652,10 @@ void loop() {
 
   unsigned long currentMillis = millis();
 
-  // ⏰ Periodically update the time (every 30s)
+  // ⏰ Periodically update the time (every 45s)
   static unsigned long lastTimeUpdate = 0;
-  if (currentMillis - lastTimeUpdate >= 30000) {
-    fetchTime(); // 🕒 Update time every 30 seconds
+  if (currentMillis - lastTimeUpdate >= 45000) {
+    fetchTime(); // 🕒 Update time every  45seconds
     lastTimeUpdate = currentMillis;
   }
 
@@ -712,38 +696,38 @@ void loop() {
 
     switch (displayCycle) {
       case 0:
-        P.displayZoneText(ZONE_UPPER, "BLOCK", PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, blockText, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, "BLOCK", PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, blockText, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       case 1:
-        P.displayZoneText(ZONE_UPPER, "MINED BY", PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, minerName.c_str(), PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, "MINED BY", PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, minerName.c_str(), PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       case 2:
-        P.displayZoneText(ZONE_UPPER, "MOSCOW TIME", PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, satsText, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, "MOSCOW TIME", PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, satsText, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       case 3:
-        P.displayZoneText(ZONE_UPPER, "USD PRICE", PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, btcText, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, "USD PRICE", PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, btcText, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       case 4:
-        P.displayZoneText(ZONE_UPPER, "FEE RATE", PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, feeText, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, "FEE RATE", PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, feeText, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       case 5:
-        P.displayZoneText(ZONE_UPPER, "TIME", PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, timeText, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, "TIME", PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, timeText, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       case 6:
-        P.displayZoneText(ZONE_UPPER, dayText, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, dateText, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, dayText, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, dateText, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       case 7: {
         static char tempDisplay[16];
         snprintf(tempDisplay, sizeof(tempDisplay), (temperature >= 0) ? "+%dC" : "%dC", temperature);
-        P.displayZoneText(ZONE_UPPER, savedCity.c_str(), PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, tempDisplay, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, savedCity.c_str(), PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, tempDisplay, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       }
       case 8: {
@@ -754,8 +738,8 @@ void loop() {
         cond[0] = toupper(cond[0]);
         strncpy(condDisplay, cond.c_str(), sizeof(condDisplay));
         condDisplay[sizeof(condDisplay) - 1] = '\0';
-        P.displayZoneText(ZONE_UPPER, "Weather is", PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
-        P.displayZoneText(ZONE_LOWER, condDisplay, PA_CENTER, 0, 5000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_UPPER, "Weather is", PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
+        P.displayZoneText(ZONE_LOWER, condDisplay, PA_CENTER, 0, 10000, PA_FADE, PA_FADE);
         break;
       }
     }
