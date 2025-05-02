@@ -1,4 +1,4 @@
-// 🚀 BLOKDBIT Matrix: Dual-Row Static Display V1.1
+// 🚀 BLOKDBIT Matrix: Dual-Row Static Display Version
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
 #include <SPI.h>
@@ -279,6 +279,10 @@ void startAccessPoint() {
 
 // Fetch Functions
 void fetchBitcoinData() {
+  if (ESP.getFreeHeap() < 160000) {
+    Serial.println("❌ Not enough heap to safely fetch. Skipping BTC fetch.");
+    return;
+  }
   Serial.println("🔄 Fetching BTC Price...");
   HTTPClient http;
   http.begin(BTC_API);
@@ -303,6 +307,10 @@ void fetchBitcoinData() {
 
 
 void fetchBlockHeight() {
+  if (ESP.getFreeHeap() < 160000) {
+    Serial.println("❌ Not enough heap to safely fetch. Skipping BTC fetch.");
+    return;
+  }
   Serial.println("🔄 Fetching Block Height...");
   HTTPClient http;
   http.begin(BLOCK_API);
@@ -319,6 +327,10 @@ void fetchBlockHeight() {
 }
 
 void fetchFeeRate() {
+  if (ESP.getFreeHeap() < 160000) {
+    Serial.println("❌ Not enough heap to safely fetch. Skipping BTC fetch.");
+    return;
+  }
   Serial.println("🔄 Fetching Fee Rate...");
   HTTPClient http;
   http.begin(FEES_API);
@@ -337,6 +349,10 @@ void fetchFeeRate() {
 }
 
 void fetchMinerName() {
+  if (ESP.getFreeHeap() < 160000) {
+    Serial.println("❌ Not enough heap to safely fetch. Skipping BTC fetch.");
+    return;
+  }
   Serial.println("🔄 Fetching Miner Name...");
   HTTPClient http;
   http.begin(MEMPOOL_BLOCKS_API);
@@ -365,6 +381,10 @@ void fetchMinerName() {
 
 
 void fetchTime() {
+  if (ESP.getFreeHeap() < 160000) {
+    Serial.println("❌ Not enough heap to safely fetch. Skipping BTC fetch.");
+    return;
+  }
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) {
     Serial.println("❌ Failed to fetch local time! Keeping previous timeText...");
@@ -393,6 +413,10 @@ void fetchTime() {
 
 
 void fetchLatLonFromCity() {
+  if (ESP.getFreeHeap() < 160000) {
+    Serial.println("❌ Not enough heap to safely fetch. Skipping BTC fetch.");
+    return;
+  }
   if (savedCity == "") {
     Serial.println("⚠️ No saved city found, skipping geolocation fetch.");
     return;
@@ -435,6 +459,10 @@ void fetchLatLonFromCity() {
 
 
 void fetchWeather() {
+  if (ESP.getFreeHeap() < 160000) {
+    Serial.println("❌ Not enough heap to safely fetch. Skipping BTC fetch.");
+    return;
+  }
   if (savedCity == "") {
     Serial.println("❌ City not set, skipping weather fetch.");
     return;
@@ -648,45 +676,58 @@ server.on("/save", HTTP_POST, [](AsyncWebServerRequest *request) {
 
 
 void loop() {
-  dnsServer.processNextRequest(); // 🚀 Handle captive portal DNS magic
+  dnsServer.processNextRequest(); // Handle captive portal DNS magic
 
   unsigned long currentMillis = millis();
 
-  // ⏰ Periodically update the time (every 45s)
-  static unsigned long lastTimeUpdate = 0;
-  if (currentMillis - lastTimeUpdate >= 45000) {
-    fetchTime(); // 🕒 Update time every  45seconds
-    lastTimeUpdate = currentMillis;
+  // ✅ Monitor heap health every 60 seconds
+  static unsigned long lastMemoryCheck = 0;
+  if (currentMillis - lastMemoryCheck >= 60000) {
+    Serial.printf("🧠 Free heap: %d | Min ever: %d\n", ESP.getFreeHeap(), ESP.getMinFreeHeap());
+    lastMemoryCheck = currentMillis;
   }
 
-  // 🌦️ Refresh weather every 30 minutes
-  if (currentMillis - lastWeatherUpdate >= WEATHER_UPDATE_INTERVAL) {
-    Serial.println("🔁 Refreshing weather info...");
+  // 🚨 Auto-reboot if heap drops too low
+  if (ESP.getFreeHeap() < 140000) {
+    Serial.println("🚨 CRITICAL: Free heap dangerously low. Rebooting to recover...");
+    delay(1000); // Give time for message to print
+    ESP.restart();
+  }
+
+  // ⏰ Fetch Time every 1 minute
+  static unsigned long lastTimeFetch = 0;
+  if (currentMillis - lastTimeFetch >= 60000) {
+    fetchTime();
+    lastTimeFetch = currentMillis;
+  }
+
+  // 🌦️ Fetch Weather every 30 minutes
+  static unsigned long lastWeatherFetch = 0;
+  if (currentMillis - lastWeatherFetch >= 1800000) {
     fetchWeather();
-    lastWeatherUpdate = currentMillis;
+    lastWeatherFetch = currentMillis;
   }
 
-  // 🚀 Periodically fetch other data
-  if (currentMillis - lastApiCall > FETCH_INTERVAL) {
-    Serial.println("🔄 Fetching updated data...");
-    switch (fetchCycle) {
-      case 0:
-        fetchBitcoinData();
-        break;
-      case 1:
-        fetchBlockHeight();
-        break;
-      case 2:
-        fetchFeeRate();
-        break;
-      case 3:
-        fetchMinerName();
-        break;
-      // ⛔ Removed time fetch here – it's now handled on its own timer
-    }
-    fetchCycle = (fetchCycle + 1) % 4;  // 0–3 only (we moved time out)
-    lastApiCall = currentMillis;
-    Serial.println("✅ Data fetch cycle complete.");
+  // 🔄 Fetch BTC Price and Fee Rate every 5 minutes
+  static unsigned long lastBTCFeeFetch = 0;
+  if (currentMillis - lastBTCFeeFetch >= 300000) {
+    fetchBitcoinData();
+    fetchFeeRate();
+    lastBTCFeeFetch = currentMillis;
+  }
+
+  // 🔄 Fetch Block Height every 5 minutes (offset by 2.5 minutes)
+  static unsigned long lastBlockHeightFetch = 0;
+  if (currentMillis - lastBlockHeightFetch >= 300000) {
+    fetchBlockHeight();
+    lastBlockHeightFetch = currentMillis;
+  }
+
+  // 🔄 Fetch Miner Name only if Block Height changes
+  static int lastKnownBlockHeight = 0;
+  if (blockHeight != lastKnownBlockHeight) {
+    fetchMinerName();
+    lastKnownBlockHeight = blockHeight;
   }
 
   // 🖥️ Rotate screens
