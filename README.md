@@ -1,6 +1,8 @@
 #  BLOKDBIT: Open-Source Bitcoin Dashboards Built for Sovereignty
 
 **Open Source. Web Flashable. Self-Sovereign.**
+This Repo was switched to STACKSWORTH 
+https://github.com/BitcoinManor/STACKSWORTH_Matrix
 
 ![BLOKDBIT Banner](https://github.com/BitcoinManor/BLOKDBIT_Matrix/raw/master/assets/blokdbit_banner.png)
 
